@@ -8,6 +8,6 @@ CREATE TABLE code_temp (
 );
 CREATE TABLE spt_users (
     user_id INTEGER NOT NULL,
-    refresh_token TEXT NOT NULL
+    refresh_token TEXT NOT NULL,
     PRIMARY KEY(user_id,refresh_token)
 );
