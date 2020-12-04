@@ -61,7 +61,7 @@ def rtv_temp():
     return data
 
 def remove_temp():
-    execute("DELETE FROM spt_temp WHERE rowid = (SELECT max(rowid) from spt_temp)")
+    execute("DELETE FROM code_temp WHERE rowid = (SELECT max(rowid) from code_temp)")
 
 def add_spt_user(user_id, refresh_token):
     execute("INSERT INTO spt_users(user_id, refresh_token) VALUES(?, ?)",
