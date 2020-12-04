@@ -14,6 +14,6 @@ def rtv_token():
 	refresh_token = sp.get_refresh_token(code)
 	discord_id = db.rtv_temp()
 	discord_id = sp.get_discord_id(discord_id)
-	# db.add_spt_user(discord_id, refresh_token)
-	# db.remove_temp()
-	return discord_id
+	db.add_spt_user(discord_id, refresh_token)
+	db.remove_temp()
+	return "Congratulations, authentication has been successful. You may now close this browser window."
