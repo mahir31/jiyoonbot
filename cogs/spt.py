@@ -113,7 +113,7 @@ class spt(commands.Cog):
     # create embeds
 
     def create_connect_embed(self, icon):
-        url = 'http://www.jiyoonbot.xyz/authorise/'
+        url = 'https://jiyoonbot.xyz/authorise/'
         content = discord.Embed(colour = int('ffff00', 16))
         content.set_author(icon_url=icon,
             name="Connect your Spotify account")
