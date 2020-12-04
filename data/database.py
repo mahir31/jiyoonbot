@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import sqlite3
 
-DATABASE = 'jiyoonbot/data/data.db'
+DATABASE = '~/jiyoonbot/data/data.db'
 
 def query(command, parameters=()):
     db = sqlite3.connect(DATABASE)
