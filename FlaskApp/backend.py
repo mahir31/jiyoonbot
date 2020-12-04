@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 from flask import request
-from data import data as db
+from data import database as db
 from utils import spt_requests as sp
 
 def app_auth():
