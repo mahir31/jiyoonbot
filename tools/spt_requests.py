@@ -13,9 +13,8 @@ SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
 SPOTIFY_API_ENDPOINT = 'https://api.spotify.com'
 DISCORD_API_ENDPOINT = 'https://discord.com/api/v8'
 CLIENT_URL = 'https://jiyoonbot.xyz'
-PORT = 80
-SPOTIFY_REDIRECT_URI = f'{CLIENT_URL}:{PORT}/callback/q/'
-DISCORD_REDIRECT_URI = f'{CLIENT_URL}:{PORT}/callback/sp/'
+SPOTIFY_REDIRECT_URI = f'{CLIENT_URL}/callback/q/'
+DISCORD_REDIRECT_URI = f'{CLIENT_URL}/callback/sp/'
 SPOTIFY_SCOPE = 'user-read-recently-played user-read-currently-playing user-top-read user-read-private'
 DISCORD_SCOPE = 'identify'
 
