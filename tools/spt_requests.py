@@ -59,12 +59,12 @@ def get_discord_id(code):
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     response = requests.post('%s/oauth2/token' % DISCORD_API_ENDPOINT, data=payload, headers=headers)
     response = response.json()
-    access_token = response['access_token']
-    headers = {'authorization': f'Bearer {access_token}'}
-    user_id = requests.get(f'{DISCORD_API_ENDPOINT}/users/@me', headers=headers)
-    user_id = user_id.json()
-    user_id = user_id['id']
-    return user_id
+    # access_token = response['access_token']
+    # headers = {'authorization': f'Bearer {access_token}'}
+    # user_id = requests.get(f'{DISCORD_API_ENDPOINT}/users/@me', headers=headers)
+    # user_id = user_id.json()
+    # user_id = user_id['id']
+    return response
 
 def get_access_token(refresh_token):
     payload = {
