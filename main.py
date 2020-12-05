@@ -15,7 +15,6 @@ else:
 logging.info(f'DEVELOPER MODE IS {"ON" if DEV else "OFF"}')
 
 TOKEN = os.environ['GLENN_BOT_TOKEN' if DEV else 'JIYOON_BOT_TOKEN']
-print(TOKEN)
 
 bot = commands.Bot(
     owner_id=277176590402846721,
@@ -23,7 +22,6 @@ bot = commands.Bot(
     command_prefix='>' if DEV else '$', 
     intents=discord.Intents().all(), 
     case_insensitive=True)
-print(bot.command_prefix)
 
 @bot.event
 async def on_ready():
