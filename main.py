@@ -1,18 +1,29 @@
+import sys
 import discord
 from discord.ext import commands
 import logging
 from tools import help
 import os
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
-TOKEN = os.environ['JIYOON_BOT_TOKEN']
+if len(sys.argv) > 1:
+    DEV = sys.argv[1] == "dev"
+else:
+    DEV = False
 
-bot = commands.Bot(owner_id=277176590402846721,
+logging.info(f'DEVELOPER MODE IS {"ON" if DEV else "OFF"}')
+
+TOKEN = os.environ['GLENN_BOT_TOKEN' if DEV else 'JIYOON_BOT_TOKEN']
+print(TOKEN)
+
+bot = commands.Bot(
+    owner_id=277176590402846721,
     help_command=help.helpembeds(),
-    command_prefix='$', 
+    command_prefix='>' if DEV else '$', 
     intents=discord.Intents().all(), 
     case_insensitive=True)
+print(bot.command_prefix)
 
 @bot.event
 async def on_ready():

@@ -25,7 +25,7 @@ class spt(commands.Cog):
         > `Defaults listed below`
         '''
         if ctx.invoked_subcommand is None:
-            await util.command_group_help(ctx)
+            await self.nowplaying(ctx)
     
     @sp.command()
     async def connect(self, ctx):

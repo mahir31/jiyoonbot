@@ -3,6 +3,7 @@ import discord
 from urllib.request import urlopen
 import io
 from colorthief import ColorThief
+from discord.ext import commands
 
 def color_from_image(url):
     image = urlopen(url)
@@ -23,8 +24,6 @@ def displayname(user):
     else:
         username = user.name
     return username
-
-    # helper functions
 
 def get_time_range(range):
     if range == 'st':
