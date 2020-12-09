@@ -25,7 +25,7 @@ bot = commands.Bot(
 
 @bot.event
 async def on_ready():
-	print(f"{bot.user.name} - {bot.user.id}\nVersion: {discord.__version__}\n")
+	logging.info(f"{bot.user.name} - {bot.user.id}\nVersion: {discord.__version__}")
 
 @bot.before_invoke
 async def before_any_command(ctx):
