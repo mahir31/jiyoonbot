@@ -5,6 +5,12 @@ import io
 from colorthief import ColorThief
 from discord.ext import commands
 
+COLOUR = int('ffff00', 16)
+FIRST_EMOJI = '\u23EE'
+LEFT_EMOJI = '\u2B05'
+RIGHT_EMOJI = '\u27A1'
+LAST_EMOJI = '\u23ED'
+
 def color_from_image(url):
     image = urlopen(url)
     image = io.BytesIO(image.read())
@@ -50,3 +56,21 @@ def display_time_range(range):
     elif range == 'long_term':
         result = '(all time)'
     return result
+
+def paginator(items, title):
+    pages = []
+    x = slice(0, 10)
+    while items:
+        listitems = ''
+        sliceditems = items[x]
+        page = discord.Embed(colour=COLOUR, title=title)
+        page.description = addlines(sliceditems)
+        pages.append(page)
+        del items[0:10]
+    return pages
+    
+def addlines(lines):
+    description = ''
+    for line in lines:
+        description+=f'\n{line}'
+    return description

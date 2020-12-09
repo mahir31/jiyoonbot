@@ -2,3 +2,4 @@ venv/
 .vscode/
 *__pycache__
 *user_cache
+data/data.db

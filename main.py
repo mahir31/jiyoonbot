@@ -38,10 +38,4 @@ for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         bot.load_extension(f'cogs.{filename[:-3]}')
 
-
-@bot.command()
-async def reload(ctx, extension):
-    bot.reload_extension(f'cogs.{extension}')
-    await ctx.send(f"cogs.{extension} has been reloaded")
-
 bot.run(TOKEN)

@@ -49,7 +49,7 @@ class spt(commands.Cog):
             await ctx.send(embed=content)
     
     @sp.command(aliases=['re'])
-    async def recent(self, ctx, limit=20):
+    async def recent(self, ctx, limit=10):
         '''Recently played tracks'''
         access_token = self.rtv_access_token(ctx.author.id)
         if not access_token:
@@ -63,7 +63,7 @@ class spt(commands.Cog):
                 await ctx.send('```an error occured```')
 
     @sp.command(aliases=['ta'])
-    async def topartists(self, ctx, time_range='st', limit=20):
+    async def topartists(self, ctx, time_range='st', limit=10):
         '''Top artists'''
         if time_range.isdigit():
             limit = time_range
@@ -82,7 +82,7 @@ class spt(commands.Cog):
                 await ctx.send('```an error occured```')
     
     @sp.command(aliases=['tt'])
-    async def toptracks(self, ctx, time_range='st', limit=20):
+    async def toptracks(self, ctx, time_range='st', limit=10):
         '''Top tracks'''
         if time_range.isdigit():
             limit = time_range
@@ -161,8 +161,8 @@ class spt(commands.Cog):
         image_color = util.color_from_image(album_artwork)
 
         content = discord.Embed(colour = int(image_color, 16))
-        content.description = '\n'.join('{} - {}'.format(artist_names, track_names) for artist_names, track_names in zip(artist_names, track_names))
-        content.set_thumbnail(url=album_artwork)
+        # content.description = '\n'.join('{} - {}'.format(artist_names, track_names) for artist_names, track_names in zip(artist_names, track_names))
+        # content.set_thumbnail(url=album_artwork)
         content.set_author(name=util.displayname(user) + ' - Recent tracks',
             icon_url=user.avatar_url)
         return content
