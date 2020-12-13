@@ -120,7 +120,7 @@ class Spotify(commands.Cog):
                     content.append(x)
                 await util.paginate(ctx,
                     content,
-                    f'{util.displayname(ctx.author)} - Top tracks:',
+                    f'{util.displayname(ctx.author)} - Top tracks {term}:',
                     image_color,
                     album_artwork,
                     ctx.author.avatar_url
@@ -180,20 +180,6 @@ class Spotify(commands.Cog):
         content.set_author(name=util.displayname(user) + ' has most recently played:',
             icon_url=user.avatar_url,
             url=track_url)
-        return content
-    
-    def create_tt_embed(self, top_tracks, user, time_range):
-        track_names = [t['name'] for t in top_tracks['items']]
-        artist_names = [a['artists'][0]['name'] for a in top_tracks['items']]
-        album_artwork = top_tracks['items'][0]['album']['images'][0]['url']
-        image_color = util.color_from_image(album_artwork)
-        term = util.display_time_range(time_range)
-
-        content = discord.Embed(colour = int(image_color, 16))
-        content.description = '\n'.join('{} - {}'.format(artist_names, track_names) for artist_names, track_names in zip(artist_names, track_names))
-        content.set_thumbnail(url=album_artwork)
-        content.set_author(name=util.displayname(user) + f' - Top tracks {term}',
-            icon_url=user.avatar_url)
         return content
 
 
