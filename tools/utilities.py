@@ -67,14 +67,16 @@ def numberitems(items):
         numbereditems.append(item)
     return numbereditems
 
-async def paginate(ctx, items, title, colour):
+async def paginate(ctx, items, author, colour, thumbnail, display_picture):
     items = numberitems(items)
     pages = []
     x = slice(0, 10)
     index = 0
     while items:
         sliceditems = items[x]
-        page = discord.Embed(colour=colour, title=title)
+        page = discord.Embed(colour=int(colour, 16))
+        page.set_thumbnail(url=thumbnail)
+        page.set_author(name=author, icon_url=display_picture)
         page.description = addlines(sliceditems)
         pages.append(page)
         del items[0:10]

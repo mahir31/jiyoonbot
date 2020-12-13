@@ -49,56 +49,84 @@ class Spotify(commands.Cog):
             await ctx.send(embed=content)
     
     @sp.command(aliases=['re'])
-    async def recent(self, ctx, limit=10):
+    async def recent(self, ctx):
         '''Recently played tracks'''
         access_token = self.rtv_access_token(ctx.author.id)
         if not access_token:
             await ctx.send(embed=self.create_connect_embed(ctx.author.avatar_url))
         else:
-            result = sp.internal_call(f'/v1/me/player/recently-played?limit={limit}', access_token)
+            result = sp.internal_call(f'/v1/me/player/recently-played?limit=50', access_token)
             if result:
-                content = self.create_recent_embed(result, ctx.author)
-                await ctx.send(embed=content)
+                track_names = [t['track']['name'] for t in result['items']]
+                artist_names = [a['track']['artists'][0]['name'] for a in result['items']]
+                album_artwork = result['items'][0]['track']['album']['images'][0]['url']
+                image_color = util.color_from_image(album_artwork)
+                content = []
+                for artist_names, track_names in zip(artist_names, track_names):
+                    x = ''.join(f'**{artist_names}** - {track_names}')
+                    content.append(x)
+                await util.paginate(ctx, 
+                    content, 
+                    f'{util.displayname(ctx.author)} - Recent tracks:', 
+                    image_color, 
+                    album_artwork,
+                    ctx.author.avatar_url
+                )
             else:
-                await ctx.send('```an error occured```')
+                await ctx.send('`an error occured`')
 
     @sp.command(aliases=['ta'])
-    async def topartists(self, ctx, time_range='st', limit=10):
+    async def topartists(self, ctx, time_range='st'):
         '''Top artists'''
-        if time_range.isdigit():
-            limit = time_range
-            time_range = util.get_time_range(time_range)
-        else:
-            time_range = util.get_time_range(time_range)
+        time_range = util.get_time_range(time_range)
         access_token = self.rtv_access_token(ctx.author.id)
         if not access_token:
             await ctx.send(embed=self.create_connect_embed(ctx.author.avatar_url))
         else:
-            result = sp.internal_call(f'/v1/me/top/artists?time_range={time_range}&limit={limit}', access_token)
+            result = sp.internal_call(f'/v1/me/top/artists?time_range={time_range}&limit=50', access_token)
             if result:
-                content = self.create_ta_embed(result, ctx.author, time_range)
-                await ctx.send(embed=content)
+                artist_names = [ta['name'] for ta in result['items']]
+                artist_image = result['items'][0]['images'][0]['url']
+                image_color = util.color_from_image(artist_image)
+                term = util.display_time_range(time_range)
+                await util.paginate(ctx, 
+                    artist_names,
+                    f'{util.displayname(ctx.author)} - Top artists {term}:',
+                    image_color,
+                    artist_image,
+                    ctx.author.avatar_url
+                )
             else:
-                await ctx.send('```an error occured```')
+                await ctx.send('`an error occured`')
     
     @sp.command(aliases=['tt'])
-    async def toptracks(self, ctx, time_range='st', limit=10):
+    async def toptracks(self, ctx, time_range='st'):
         '''Top tracks'''
-        if time_range.isdigit():
-            limit = time_range
-            time_range = util.get_time_range(time_range)
-        else:
-            time_range = util.get_time_range(time_range)
+        time_range = util.get_time_range(time_range)
         access_token = self.rtv_access_token(ctx.author.id)
         if not access_token:
             await ctx.send(embed=self.create_connect_embed(ctx.author.avatar_url))
         else:
-            result = sp.internal_call(f'/v1/me/top/tracks?time_range={time_range}&limit={limit}', access_token)
+            result = sp.internal_call(f'/v1/me/top/tracks?time_range={time_range}&limit=50', access_token)
             if result:
-                content = self.create_tt_embed(result, ctx.author, time_range)
-                await ctx.send(embed=content)
+                track_names = [t['name'] for t in result['items']]
+                artist_names = [a['artists'][0]['name'] for a in result['items']]
+                album_artwork = result['items'][0]['album']['images'][0]['url']
+                image_color = util.color_from_image(album_artwork)
+                term = util.display_time_range(time_range)
+                content = []
+                for artist_names, track_names in zip(artist_names, track_names):
+                    x = ''.join(f'**{artist_names}** - {track_names}')
+                    content.append(x)
+                await util.paginate(ctx,
+                    content,
+                    f'{util.displayname(ctx.author)} - Top tracks:',
+                    image_color,
+                    album_artwork,
+                    ctx.author.avatar_url
+                )
             else:
-                await ctx.send('```an error occured```')
+                await ctx.send('`an error occured`')
     
     # helper functions
 
@@ -152,32 +180,6 @@ class Spotify(commands.Cog):
         content.set_author(name=util.displayname(user) + ' has most recently played:',
             icon_url=user.avatar_url,
             url=track_url)
-        return content
-    
-    def create_recent_embed(self, recently_played, user):
-        track_names = [t['track']['name'] for t in recently_played['items']]
-        artist_names = [a['track']['artists'][0]['name'] for a in recently_played['items']]
-        album_artwork = recently_played['items'][0]['track']['album']['images'][0]['url']
-        image_color = util.color_from_image(album_artwork)
-
-        content = discord.Embed(colour = int(image_color, 16))
-        content.description = '\n'.join('{} - {}'.format(artist_names, track_names) for artist_names, track_names in zip(artist_names, track_names))
-        content.set_thumbnail(url=album_artwork)
-        content.set_author(name=util.displayname(user) + ' - Recent tracks',
-            icon_url=user.avatar_url)
-        return content
-    
-    def create_ta_embed(self, top_artists, user, time_range):
-        artist_names = [ta['name'] for ta in top_artists['items']]
-        artist_image = top_artists['items'][0]['images'][0]['url']
-        image_color = util.color_from_image(artist_image)
-        term = util.display_time_range(time_range)
-
-        content = discord.Embed(colour = int(image_color, 16))
-        content.description = '\n'.join(artist_names)
-        content.set_thumbnail(url=artist_image)
-        content.set_author(name=util.displayname(user) + f' - Top artists {term}',
-            icon_url=user.avatar_url)
         return content
     
     def create_tt_embed(self, top_tracks, user, time_range):
