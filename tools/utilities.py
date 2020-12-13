@@ -6,12 +6,6 @@ import asyncio
 from colorthief import ColorThief
 from discord.ext import commands
 
-COLOUR = int('ffff00', 16)
-FIRST_EMOJI = '\u23EE'
-LEFT_EMOJI = '\u2B05'
-RIGHT_EMOJI = '\u27A1'
-LAST_EMOJI = '\u23ED'
-
 def color_from_image(url):
     image = urlopen(url)
     image = io.BytesIO(image.read())
@@ -64,14 +58,23 @@ def addlines(lines):
         description+=f'\n{line}'
     return description
 
-async def paginate(ctx, items, title):
+def numberitems(items):
+    numbereditems = []
+    n = 1
+    for item in items:
+        item = f'`#{n}.` {item}'
+        n += 1
+        numbereditems.append(item)
+    return numbereditems
+
+async def paginate(ctx, items, title, colour):
+    items = numberitems(items)
     pages = []
     x = slice(0, 10)
     index = 0
     while items:
-        listitems = ''
         sliceditems = items[x]
-        page = discord.Embed(colour=COLOUR, title=title)
+        page = discord.Embed(colour=colour, title=title)
         page.description = addlines(sliceditems)
         pages.append(page)
         del items[0:10]

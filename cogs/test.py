@@ -41,7 +41,7 @@ class test(commands.Cog):
             'Voice', 
             'Zig Zag']
         if tracks:
-            await utils.paginate(ctx, tracks, 'track list: ')
+            await utils.paginate(ctx, tracks, 'track list:', int('ffff00', 16))
 
 
 def setup(bot):
