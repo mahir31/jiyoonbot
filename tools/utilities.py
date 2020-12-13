@@ -2,6 +2,7 @@ import sys
 import discord
 from urllib.request import urlopen
 import io
+import asyncio
 from colorthief import ColorThief
 from discord.ext import commands
 
@@ -56,10 +57,17 @@ def display_time_range(range):
     elif range == 'long_term':
         result = '(all time)'
     return result
+    
+def addlines(lines):
+    description = ''
+    for line in lines:
+        description+=f'\n{line}'
+    return description
 
-def paginator(items, title):
+async def paginate(ctx, items, title):
     pages = []
     x = slice(0, 10)
+    index = 0
     while items:
         listitems = ''
         sliceditems = items[x]
@@ -67,10 +75,34 @@ def paginator(items, title):
         page.description = addlines(sliceditems)
         pages.append(page)
         del items[0:10]
-    return pages
+    page = await ctx.send(embed=pages[index])
     
-def addlines(lines):
-    description = ''
-    for line in lines:
-        description+=f'\n{line}'
-    return description
+    def event_check(payload):
+        if payload.user_id == ctx.bot.user.id:
+            return False
+        if payload.message_id != page.id:
+            return False
+        return True
+    
+    await page.add_reaction('◀️')
+    await page.add_reaction('▶️')
+    while True:
+        try:
+            reaction = await ctx.bot.wait_for('raw_reaction_add', timeout=60, check=event_check)
+            if str(reaction.emoji) == '◀️':
+                if index == 0:
+                    await page.remove_reaction(reaction.emoji, ctx.bot.get_user(reaction.user_id))
+                    continue
+                index -= 1                    
+                await page.edit(embed=pages[index])
+                await page.remove_reaction(reaction.emoji, ctx.bot.get_user(reaction.user_id))
+            if str(reaction.emoji) == '▶️':
+                if index == len(pages) - 1:
+                    await page.remove_reaction(reaction.emoji, ctx.bot.get_user(reaction.user_id))
+                    continue
+                index += 1
+                await page.edit(embed=pages[index])
+                await page.remove_reaction(reaction.emoji, ctx.bot.get_user(reaction.user_id))
+        except asyncio.exceptions.TimeoutError:
+            await page.clear_reaction('◀️')
+            await page.clear_reaction('▶️')

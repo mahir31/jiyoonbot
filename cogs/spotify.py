@@ -161,8 +161,8 @@ class Spotify(commands.Cog):
         image_color = util.color_from_image(album_artwork)
 
         content = discord.Embed(colour = int(image_color, 16))
-        # content.description = '\n'.join('{} - {}'.format(artist_names, track_names) for artist_names, track_names in zip(artist_names, track_names))
-        # content.set_thumbnail(url=album_artwork)
+        content.description = '\n'.join('{} - {}'.format(artist_names, track_names) for artist_names, track_names in zip(artist_names, track_names))
+        content.set_thumbnail(url=album_artwork)
         content.set_author(name=util.displayname(user) + ' - Recent tracks',
             icon_url=user.avatar_url)
         return content
