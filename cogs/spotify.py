@@ -5,7 +5,7 @@ from tools import spt_requests as sp
 from tools import utilities as util
 import logging
 
-class spt(commands.Cog):
+class Spotify(commands.Cog):
     
     def __init__(self, bot):
         self.bot = bot
@@ -196,4 +196,4 @@ class spt(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(spt(bot))
+    bot.add_cog(Spotify(bot))

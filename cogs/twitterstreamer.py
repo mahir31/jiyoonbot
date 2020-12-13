@@ -39,7 +39,7 @@ class MyStreamListener(tweepy.StreamListener):
 		self.discord_client.create_task(self.streamcog.restart("stream timeout"))
 
 
-class Streamer(commands.Cog):
+class TwitterStreamer(commands.Cog):
 
 	def __init__(self, bot):
 		self.bot = bot
@@ -178,4 +178,4 @@ class Streamer(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Streamer(bot))
+    bot.add_cog(TwitterStreamer(bot))

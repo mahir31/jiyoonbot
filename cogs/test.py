@@ -2,9 +2,8 @@ import discord
 from discord.ext import commands
 from tools import utilities as utils
 import logging
+import asyncio
 
-LEFT_EMOJI = '\u2B05'
-RIGHT_EMOJI = '\u27A1'
 
 class test(commands.Cog):
 
@@ -18,31 +17,51 @@ class test(commands.Cog):
     # commands
 
     @commands.command()
-    async def paginate(self, ctx):
+    async def test(self, ctx):
         '''test for pagination'''
-        tracks = ['Rest', 
-            'Intro', 
-            'London', 
-            'Square (2017)', 
-            'Point (feat. Loopy)', 
-            'True lover', 
-            'Amy', 
-            'Newsong2', 
-            'Not a girl', 
-            'Datoom', 
-            'Berlin', 
-            '0310', 
-            'Bunny', 
-            'lovelovelove', 
-            'Mr.gloomy', 
-            'Meant to be', 
-            'can i b u', 
-            'Popo (How deep is our love?)']
+        
+        tracks = ["I'll Take Half Of Your Sorrows Today", 
+            'We Need To Be Careful To Love', 
+            'Rose', 
+            'A Beginner In Society', 
+            "I'll Take Half Of Your Sorrows Today", 
+            'Some Flowers', 
+            'Look Like You Have A Natural Bent', 
+            '魅力とは?', 
+            '甘い誘惑', 
+            'And July', 
+            'More (Feat. Giriboy)', 
+            'under the ground', 
+            'GOTTASADAE', 
+            'DDING (Prod. By GIRIBOY)', 
+            'LEGACY', 
+            'Nerdy Love', 
+            'Weather', 
+            'Feel Good (SECRET CODE)', 
+            'Voice', 
+            'Zig Zag']
         if tracks:
-            pages = utils.paginator(tracks, 'page test')
-        page = await ctx.send(embed=pages[0])
-        await page.add_reaction(LEFT_EMOJI)
-        await page.add_reaction(RIGHT_EMOJI)
+            pages = utils.paginator(tracks, 'track names')
+        index=0
+        page = await ctx.send(embed=pages[index])
+        await page.add_reaction('◀️')
+        await page.add_reaction('▶️')
+        while True:
+            try:
+                reaction = await self.bot.wait_for('raw_reaction_add', timeout=60, check=self.event_check)
+                if str(reaction.emoji) == '◀️':
+                    index -= 1
+                    await page.edit(embed=pages[index])
+                if str(reaction.emoji) == '▶️':
+                    index += 1
+                    await page.edit(embed=pages[index])
+            except TimeoutError:
+                return
+        
+    def event_check(self, payload: discord.RawReactionActionEvent):
+        if payload.user_id == self.bot.user.id:
+            return False
+        return True
 
 
 def setup(bot):
