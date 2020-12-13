@@ -50,15 +50,19 @@ class test(commands.Cog):
             try:
                 reaction = await self.bot.wait_for('raw_reaction_add', timeout=60, check=self.event_check)
                 if str(reaction.emoji) == '◀️':
+                    if index == 0:
+                        continue
                     index -= 1
                     await page.edit(embed=pages[index])
                 if str(reaction.emoji) == '▶️':
+                    if index == len(pages) - 1:
+                        continue
                     index += 1
                     await page.edit(embed=pages[index])
-            except TimeoutError:
+            except asyncio.exceptions.TimeoutError:
                 return
         
-    def event_check(self, payload: discord.RawReactionActionEvent):
+    def event_check(self, payload):
         if payload.user_id == self.bot.user.id:
             return False
         return True
