@@ -47,7 +47,7 @@ class TwitterStreamer(commands.Cog):
 	
 	@commands.Cog.listener()
 	async def on_ready(self):
-		logging.info("cog: twt.py connected")
+		logging.info("cog: twitterstreamer.py connected")
 	
 	# bot commands
 

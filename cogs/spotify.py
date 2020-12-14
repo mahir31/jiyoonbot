@@ -12,7 +12,7 @@ class Spotify(commands.Cog):
     
     @commands.Cog.listener()
     async def on_ready(self):
-        logging.info("cog: spt.py connected")
+        logging.info("cog: spotify.py connected")
     
     # commands
 
@@ -21,8 +21,6 @@ class Spotify(commands.Cog):
         '''
         Spotify Commands:
         > `available time ranges: shortterm | mediumterm | longterm`
-        > `maximum limit: 50`
-        > `Defaults listed below`
         '''
         if ctx.invoked_subcommand is None:
             await self.nowplaying(ctx)
