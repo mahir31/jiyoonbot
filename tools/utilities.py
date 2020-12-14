@@ -93,7 +93,7 @@ async def paginate(ctx, items, author, colour, thumbnail, display_picture):
     await page.add_reaction('▶️')
     while True:
         try:
-            reaction = await ctx.bot.wait_for('raw_reaction_add', timeout=60, check=event_check)
+            reaction = await ctx.bot.wait_for('raw_reaction_add', timeout=90, check=event_check)
             if str(reaction.emoji) == '◀️':
                 if index == 0:
                     await page.remove_reaction(reaction.emoji, ctx.bot.get_user(reaction.user_id))
