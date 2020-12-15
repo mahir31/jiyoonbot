@@ -111,3 +111,19 @@ async def paginate(ctx, items, author, colour, thumbnail, display_picture):
         except asyncio.exceptions.TimeoutError:
             await page.clear_reaction('◀️')
             await page.clear_reaction('▶️')
+
+def strfrmstmp(s):
+    s = (int(s))
+    d, s = divmod(s, 86400)
+    h, s = divmod(s, 3600)
+    m, s = divmod(s, 60)
+    comp = []
+    if d > 0:
+        comp.append(f'{d} day' + ('s' if d > 1 else ''))
+    if h > 0:
+        comp.append(f'{h} hour' + ('s' if h > 1 else ''))
+    if m > 0:
+        comp.append(f'{m} minute' + ('s' if m > 1 else ''))
+    if s > 0:
+        comp.append(f'{s} second' + ('s' if s > 1 else ''))
+    return ' '.join(comp)
