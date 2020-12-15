@@ -39,7 +39,6 @@ for filename in os.listdir('./cogs'):
         bot.load_extension(f'cogs.{filename[:-3]}')
 
 @bot.command()
-@bot.is_owner()
 async def reload(ctx, extension):
     bot.reload_extension(f'cogs.{extension}')
     await ctx.send(f"cogs.{extension} has been reloaded")

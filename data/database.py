@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 import sqlite3
 
-# DATABASE = 'data/data.db'
-DATABASE = '/root/jiyoonbot/data/data.db'
+DATABASE = 'data/data.db'
+# DATABASE = '/root/jiyoonbot/data/data.db'
 
 def query(command, parameters=()):
     db = sqlite3.connect(DATABASE)
@@ -18,6 +18,8 @@ def execute(command, parameters=()):
     cursor.execute(command, parameters)
     db.commit()
     db.close()
+
+# twitter cog queries
 
 def channel_exists(channel_id):
     data = query("SELECT channel_id FROM follow_list WHERE channel_id=?", (channel_id,))
@@ -53,6 +55,8 @@ def get_channels(twitter_id):
         channels.append(int(channel[0]))
     return channels
 
+# spotify cog queries
+
 def add_temp(code):
     execute("INSERT INTO code_temp(code) VALUES(?)", (code,))
 
@@ -71,3 +75,13 @@ def add_spt_user(user_id, refresh_token):
 def rtv_refresh_token(user_id):
     data = query("SELECT refresh_token FROM spt_users WHERE user_id=?", (user_id,))
     return data
+
+# fish cog queries
+
+def fisher_exists(fisher_id):
+    data = query("SELECT * FROM fish WHERE fisher_id=?", (fisher_id,))
+    return data
+
+def go_fish(fisher_id, times_fished, total_fish, time_stamp, exp_points):
+    execute("REPLACE INTO fish(fisher_id, times_fished, total_fish, time_stamp, exp_points) VALUES(?, ?, ?, ?, ?)",
+    (fisher_id, times_fished, total_fish, time_stamp, exp_points,))

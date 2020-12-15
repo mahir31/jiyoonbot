@@ -16,6 +16,7 @@ CREATE TABLE fish (
     fisher_id INTEGER NOT NULL,
     times_fished INTEGER NOT NULL,
     total_fish INTEGER NOT NULL,
-    time_remaining INTEGER NOT NULL,
+    time_stamp REAL NOT NULL,
+    exp_points INTEGER NOT NULL,
     PRIMARY KEY(fisher_id)
 );
