@@ -114,7 +114,7 @@ class Spotify(commands.Cog):
                 term = util.display_time_range(time_range)
                 content = []
                 for artist_names, track_names in zip(artist_names, track_names):
-                    x = ''.join(f'**{artist_names}** - {track_names}')
+                    x = ''.join(f'{artist_names} - **{track_names}**')
                     content.append(x)
                 await util.paginate(ctx,
                     content,
