@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 from data import database as db
 import logging
-import datetime
 from datetime import datetime
 import random
 import asyncio
@@ -26,8 +25,8 @@ class fish(commands.Cog):
     async def go(self, ctx):
         fisher = db.fisher_exists(ctx.author.id)
         if fisher:
-            fisher_id, times_fished, total_fish, time_stamp, exp_points, coins = fisher[0]
-            await ctx.send(f'fisher id: {fisher_id}, times fished: {times_fished}, total fish: {total_fish}, timestamp: {time_stamp}, exp points: {exp_points}, coins: {coins}')
+            fisher_id, times_fished, total_fish, last_fished, exp_points, coins = fisher[0]
+            await ctx.send(f'fisher id: {fisher_id}, times fished: {times_fished}, total fish: {total_fish}, last fished: {last_fished}, exp points: {exp_points}, coins: {coins}')
         else:
             await self.go_fishing(ctx)
 
@@ -50,6 +49,10 @@ class fish(commands.Cog):
 
     def catch_check(ctx, payload):
         return payload.content == 'catch'
+    
+    def cooldown_calc(self, last_fished):
+        cooldown = 1800
+        
 
 def setup(bot):
     bot.add_cog(fish(bot))
