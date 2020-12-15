@@ -30,7 +30,7 @@ class fish(commands.Cog):
             if bool(can_fish) == True:
                 await self.go_fishing(ctx)
             else:
-                await ctx.send('you can not go fishing yet you are still on cooldown.')
+                await ctx.send("imagine trying to go fishing while you're still on cooldown, couldn't be me.")
         else:
             await self.go_fishing(ctx)
 
@@ -56,8 +56,8 @@ class fish(commands.Cog):
     
     def cooldown_calc(self, last_fished):
         cooldown = 1800
-        can_fish = last_fished - datetime.timestamp(datetime.now())
-        can_fish = can_fish - cooldown
+        can_fish = datetime.timestamp(datetime.now()) - last_fished
+        can_fish = cooldown - can_fish
         if can_fish <= 0:
             return True
         else:
