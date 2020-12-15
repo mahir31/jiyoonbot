@@ -26,7 +26,11 @@ class fish(commands.Cog):
         fisher = db.fisher_exists(ctx.author.id)
         if fisher:
             fisher_id, times_fished, total_fish, last_fished, exp_points, coins = fisher[0]
-            await ctx.send(f'fisher id: {fisher_id}, times fished: {times_fished}, total fish: {total_fish}, last fished: {last_fished}, exp points: {exp_points}, coins: {coins}')
+            can_fish = self.cooldown_calc(last_fished)
+            if bool(can_fish) == True:
+                await self.go_fishing(ctx)
+            else:
+                await ctx.send('you can not go fishing yet you are still on cooldown.')
         else:
             await self.go_fishing(ctx)
 
@@ -52,7 +56,14 @@ class fish(commands.Cog):
     
     def cooldown_calc(self, last_fished):
         cooldown = 1800
-        
+        can_fish = last_fished - datetime.timestamp(datetime.now())
+        can_fish = can_fish - cooldown
+        if can_fish <= 0:
+            return True
+        else:
+            return False
+
+# await ctx.send(f'fisher id: {fisher_id}, times fished: {times_fished}, total fish: {total_fish}, last fished: {last_fished}, exp points: {exp_points}, coins: {coins}')
 
 def setup(bot):
     bot.add_cog(fish(bot))
