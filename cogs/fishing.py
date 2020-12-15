@@ -4,6 +4,7 @@ from data import database as db
 import logging
 import datetime
 from datetime import datetime
+import random
 
 class fish(commands.Cog):
     
@@ -25,10 +26,19 @@ class fish(commands.Cog):
         fisher = db.fisher_exists(ctx.author.id)
         if fisher:
             fisher_id, times_fished, total_fish, time_stamp, exp_points = fisher[0]
-            await ctx.send(f'{fisher_id}, {times_fished}, {total_fish}, {time_stamp}, {exp_points}')
+            await ctx.send(f'fisher id: {fisher_id}, times fished: {times_fished}, total fish: {total_fish}, timestamp: {time_stamp}, exp points: {exp_points}')
         else:
-            db.go_fish(ctx.author.id, 1, 1, datetime.timestamp(datetime.now()), 8)
-            await ctx.send('job done')
+            catch = self.go_fishing()
+            if bool(catch) == True:
+                db.go_fish(ctx.author.id, 1, catch, datetime.timestamp(datetime.now()), 8)
+                await ctx.send(f'congratulations you caught {catch} fish')
+            else:
+                db.go_fish(ctx.author.id, 1, catch, datetime.timestamp(datetime.now()), 0)
+                await ctx.send('unfortunately you did not catch anything')
+
+    def go_fishing(self):
+        catch = random.randint(0, 1)
+        return catch
 
 def setup(bot):
     bot.add_cog(fish(bot))
