@@ -5,6 +5,7 @@ import logging
 import datetime
 from datetime import datetime
 import random
+import asyncio
 
 class fish(commands.Cog):
     
@@ -25,20 +26,30 @@ class fish(commands.Cog):
     async def go(self, ctx):
         fisher = db.fisher_exists(ctx.author.id)
         if fisher:
-            fisher_id, times_fished, total_fish, time_stamp, exp_points = fisher[0]
-            await ctx.send(f'fisher id: {fisher_id}, times fished: {times_fished}, total fish: {total_fish}, timestamp: {time_stamp}, exp points: {exp_points}')
+            fisher_id, times_fished, total_fish, time_stamp, exp_points, coins = fisher[0]
+            await ctx.send(f'fisher id: {fisher_id}, times fished: {times_fished}, total fish: {total_fish}, timestamp: {time_stamp}, exp points: {exp_points}, coins: {coins}')
         else:
-            catch = self.go_fishing()
-            if bool(catch) == True:
-                db.go_fish(ctx.author.id, 1, catch, datetime.timestamp(datetime.now()), 8)
-                await ctx.send(f'congratulations you caught {catch} fish')
-            else:
-                db.go_fish(ctx.author.id, 1, catch, datetime.timestamp(datetime.now()), 0)
-                await ctx.send('unfortunately you did not catch anything')
+            await self.go_fishing(ctx)
 
-    def go_fishing(self):
+    async def go_fishing(self, ctx):
         catch = random.randint(0, 1)
-        return catch
+        if bool(catch) == True:
+            await ctx.send('Something is on the line, type "catch" to reel it in!')
+            try:
+                response = await self.bot.wait_for('message', check=self.catch_check, timeout=15)
+                if response:
+                    catch = random.randint(0, 1)
+                    if bool(catch) == True:
+                        await ctx.send('Congratulations you caught 1 fish and gained 8 experience points!')
+                    else:
+                        await ctx.send('You tried your hardest to reel it in but the fish slipped away, better luck next time.')
+            except asyncio.TimeoutError:
+                await ctx.send('Oops, the fish escaped before you could reel it in')
+        else:
+            await ctx.send('You cast your reel, but sadly no fish took the bait, try again later')
+
+    def catch_check(ctx, payload):
+        return payload.content == 'catch'
 
 def setup(bot):
     bot.add_cog(fish(bot))

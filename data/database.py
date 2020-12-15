@@ -82,6 +82,6 @@ def fisher_exists(fisher_id):
     data = query("SELECT * FROM fish WHERE fisher_id=?", (fisher_id,))
     return data
 
-def go_fish(fisher_id, times_fished, total_fish, time_stamp, exp_points):
-    execute("REPLACE INTO fish(fisher_id, times_fished, total_fish, time_stamp, exp_points) VALUES(?, ?, ?, ?, ?)",
-    (fisher_id, times_fished, total_fish, time_stamp, exp_points,))
+def go_fish(fisher_id, times_fished, total_fish, time_stamp, exp_points, coins):
+    execute("REPLACE INTO fish(fisher_id, times_fished, total_fish, time_stamp, exp_points, coins) VALUES(?, ?, ?, ?, ?)",
+    (fisher_id, times_fished, total_fish, time_stamp, exp_points, coins,))

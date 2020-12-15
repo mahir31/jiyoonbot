@@ -18,5 +18,6 @@ CREATE TABLE fish (
     total_fish INTEGER NOT NULL,
     time_stamp REAL NOT NULL,
     exp_points INTEGER NOT NULL,
+    coins INTEGER NOT NULL,
     PRIMARY KEY(fisher_id)
 );
