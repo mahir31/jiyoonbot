@@ -20,9 +20,7 @@ class fish(commands.Cog):
     
     @commands.group(case_insensitive=True)
     async def fs(self, ctx):
-        '''
-        Fishing Commands:
-        '''
+        '''Fishing Commands:'''
     
     @fs.command()
     async def go(self, ctx):
@@ -34,7 +32,9 @@ class fish(commands.Cog):
             if can_fish <= 0:
                 await self.go_fishing(ctx, fisher)
             else:
-                await ctx.send(f"imagine trying to go fishing while you're still on cooldown, couldn't be me. try again in {util.stringfromtimestamp(can_fish)} ⏰")
+                content = discord.Embed(colour=int('add8e6', 16))
+                content.description = f'⏱️ You feel tired and reckon you can go fishing in around **{util.stringfromtimestamp(can_fish)}**'
+                await ctx.send(embed=content)
         else:
             db.go_fish(ctx.author.id, 0, 0, datetime.timestamp(datetime.now()), 0, 0)
             fisher = db.fisher_exists(ctx.author.id)
