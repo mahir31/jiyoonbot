@@ -7,6 +7,8 @@ import random
 import asyncio
 from tools import utilities as util
 
+colour = 'add8e6'
+
 class fish(commands.Cog):
     
     def __init__(self, bot):
@@ -32,7 +34,7 @@ class fish(commands.Cog):
             if can_fish <= 0:
                 await self.go_fishing(ctx, fisher)
             else:
-                content = discord.Embed(colour=int('add8e6', 16))
+                content = discord.Embed(colour=int(colour, 16))
                 content.description = f'⏱️ You feel tired and reckon you can go fishing in around **{util.stringfromtimestamp(can_fish)}**'
                 await ctx.send(embed=content)
         else:
@@ -48,7 +50,7 @@ class fish(commands.Cog):
             last_fished = datetime.now() - datetime.fromtimestamp(fisher[0][3])
             last_fished = util.stringfromtimestamp(last_fished.seconds)
             content = discord.Embed(title=f"Fisher {util.displayname(ctx.author)}'s profile", 
-            colour=int('add8e6', 16))
+            colour=int(colour, 16))
             content.description = f"""🎣 Total times fished: {fisher[0][1]}
             🐋 Total Fish caught: {fisher[0][2]}
             ⏲️ Last fished: {last_fished}
@@ -65,11 +67,11 @@ class fish(commands.Cog):
             last_fished = fisher[0][3]
             can_fish = self.cooldown_calc(last_fished)
             if can_fish <= 0:
-                content = discord.Embed(colour=int('add8e6', 16))
+                content = discord.Embed(colour=int(colour, 16))
                 content.description = f'⏰ You feel refreshed and alert, time to go fishing again!'
                 await ctx.send(embed=content)
             else:
-                content = discord.Embed(colour=int('add8e6', 16))
+                content = discord.Embed(colour=int(colour, 16))
                 content.description = f'⏱️ You feel tired and reckon you can go fishing in around **{util.stringfromtimestamp(can_fish)}**'
                 await ctx.send(embed=content)
     
@@ -100,7 +102,7 @@ class fish(commands.Cog):
         last_fished = datetime.timestamp(datetime.now())
         exp_points += exp
         db.go_fish(fisher_id, times_fished, total_fish, last_fished, exp_points, coins)
-        content = discord.Embed(colour=int('add8e6', 16))
+        content = discord.Embed(colour=int(colour, 16))
         content.description = f'{message}'
         await ctx.send(embed=content)
 
