@@ -43,7 +43,7 @@ class fish(commands.Cog):
     async def profile(self, ctx):
         fisher = db.fisher_exists(ctx.author.id)
         if fisher:
-            content = discord.Embed(title=f"fisher {util.displayname(ctx.author)}'s profile", 
+            content = discord.Embed(title=f"Fisher {util.displayname(ctx.author)}'s profile", 
             colour=int('add8e6', 16))
             content.description = f"""Total times fished: {fisher[0][1]}
             Total Fish caught: {fisher[0][2]}
