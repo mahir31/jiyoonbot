@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from data import database as db
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 import random
 import asyncio
 from tools import utilities as util
@@ -43,13 +43,32 @@ class fish(commands.Cog):
     async def profile(self, ctx):
         fisher = db.fisher_exists(ctx.author.id)
         if fisher:
+            last_fished = datetime.now() - datetime.fromtimestamp(fisher[0][3])
+            last_fished = util.stringfromtimestamp(last_fished.seconds)
             content = discord.Embed(title=f"Fisher {util.displayname(ctx.author)}'s profile", 
             colour=int('add8e6', 16))
             content.description = f"""🎣 Total times fished: {fisher[0][1]}
             🐋 Total Fish caught: {fisher[0][2]}
-            ⏲️ Last fished: {util.stringfromtimestamp(self.cooldown_calc(fisher[0][3]))}
+            ⏲️ Last fished: {last_fished}
             🌟 Experience points: {fisher[0][4]}"""
             await ctx.send(embed=content)
+        else:
+            await ctx.send('You have not fished before, please fish before checking your profile!')
+    
+    @fs.command(aliases=['rm'])
+    async def reminder(self, ctx):
+        fisher = db.fisher_exists(ctx.author.id)
+        if fisher:
+            last_fished = fisher[0][3]
+            can_fish = self.cooldown_calc(last_fished)
+            if can_fish <= 0:
+                content = discord.Embed(colour=int('add8e6', 16))
+                content.description = f'⏰ You feel refreshed and alert, time to go fishing again!'
+                await ctx.send(embed=content)
+            else:
+                content = discord.Embed(colour=int('add8e6', 16))
+                content.description = f'⏱️ You feel tired and reckon you can go fishing in around **{util.stringfromtimestamp(can_fish)}**'
+                await ctx.send(embed=content)
     
     # helper functions
 
@@ -97,8 +116,6 @@ class fish(commands.Cog):
         can_fish = datetime.timestamp(datetime.now()) - last_fished
         can_fish = cooldown - can_fish
         return can_fish
-
-# await ctx.send(f'fisher id: {fisher_id}, times fished: {times_fished}, total fish: {total_fish}, last fished: {last_fished}, exp points: {exp_points}, coins: {coins}')
 
 def setup(bot):
     bot.add_cog(fish(bot))
