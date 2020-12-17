@@ -112,7 +112,7 @@ async def paginate(ctx, items, author, colour, thumbnail, display_picture):
             await page.clear_reaction('◀️')
             await page.clear_reaction('▶️')
 
-def strfrmstmp(s):
+def stringfromtimestamp(s):
     s = (int(s))
     d, s = divmod(s, 86400)
     h, s = divmod(s, 3600)

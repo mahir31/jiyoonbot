@@ -5,6 +5,7 @@ import logging
 from datetime import datetime
 import random
 import asyncio
+from tools import utilities as util
 
 class fish(commands.Cog):
     
@@ -14,6 +15,8 @@ class fish(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         logging.info("cog: fishing.py connected")
+    
+    # commands
     
     @commands.group(case_insensitive=True)
     async def fs(self, ctx):
@@ -32,19 +35,34 @@ class fish(commands.Cog):
             else:
                 await ctx.send("imagine trying to go fishing while you're still on cooldown, couldn't be me.")
         else:
+            db.go_fish(ctx.author.id, 0, 0, datetime.timestamp(datetime.now()), 0, 0)
+            fisher = db.fisher_exists(ctx.author.id)
             await self.go_fishing(ctx, fisher)
 
+    @fs.command(aliases=['pf'])
+    async def profile(self, ctx):
+        fisher = db.fisher_exists(ctx.author.id)
+        if fisher:
+            content = discord.Embed(title=f"fisher {util.displayname(ctx.author)}'s profile", 
+            colour=int('add8e6', 16))
+            content.description = f"""Total times fished: {fisher[0][1]}
+            Total Fish caught: {fisher[0][2]}
+            Last fished: {util.stringfromtimestamp(fisher[0][3])}
+            Experience points: {fisher[0][4]}"""
+            await ctx.send(embed=content)
+    
+    # helper functions
+
     async def go_fishing(self, ctx, fisher):
+        '''go fishing'''
         fisher_id, times_fished, total_fish, last_fished, exp_points, coins = fisher[0]
         catch = random.randint(0, 1)
-        catch = 1
         if bool(catch) == True:
             await ctx.send('Something is on the line, type `"catch"` to reel it in!')
             try:
                 response = await self.bot.wait_for('message', check=self.catch_check, timeout=15)
                 if response:
                     catch = random.randint(0, 1)
-                    catch = 1
                     if bool(catch) == True:
                         times_fished += 1
                         total_fish += 1
