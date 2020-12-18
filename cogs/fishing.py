@@ -53,7 +53,7 @@ class fish(commands.Cog):
             colour=int(colour, 16))
             content.description = f"""🎣 Total times fished: {fisher[0][1]}
             🐋 Total Fish caught: {fisher[0][2]}
-            ⏲️ Last fished: {last_fished}
+            ⏲️ Last fished: {last_fished} ago
             🌟 Experience points: {fisher[0][4]}"""
             await ctx.send(embed=content)
         else:

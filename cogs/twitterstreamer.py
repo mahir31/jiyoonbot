@@ -87,12 +87,14 @@ class TwitterStreamer(commands.Cog):
 		await ctx.send(f"site '{username}' has been removed from {channel.mention}")
 	
 	@tw.command(aliases=['dc'])
+	@commands.is_owner()
 	async def disconnect(self, ctx):
 		'''disconnect the bot - requires bot owner role'''
 		self.disconnect_stream()
 		await ctx.send('Twitter streamer has been disconnected')
 	
 	@tw.command()
+	@commands.is_owner()
 	async def start(self, ctx):
 		'''start and connect the bot - requires bot owner role'''
 		self.run_stream()
