@@ -196,6 +196,7 @@ class Spotify(commands.Cog):
         album_artwork = now_playing['album']['images'][0]['url']
         image_color = util.color_from_image(album_artwork)
         track_url = now_playing['external_urls']['spotify']
+        popularity = now_playing['popularity']
 
         content = discord.Embed(colour = int(image_color, 16))
         content.description = album_name
@@ -204,6 +205,7 @@ class Spotify(commands.Cog):
         content.set_author(name=util.displayname(user) + " is now playing",
             icon_url=user.avatar_url,
             url=track_url)
+        content.set_footer(text=f'Popularity: {popularity}')
         return content
     
     def create_recently_played_embed(self, recently_played, user):
@@ -213,6 +215,7 @@ class Spotify(commands.Cog):
         album_artwork = recently_played['album']['images'][0]['url']
         image_color = util.color_from_image(album_artwork)
         track_url = recently_played['external_urls']['spotify']
+        popularity = recently_played['popularity']
 
         content = discord.Embed(colour = int(image_color, 16))
         content.description = album_name
@@ -221,6 +224,7 @@ class Spotify(commands.Cog):
         content.set_author(name=util.displayname(user) + ' has most recently played:',
             icon_url=user.avatar_url,
             url=track_url)
+        content.set_footer(text=f'Popularity: {popularity}')
         return content
 
 
