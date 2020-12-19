@@ -4,6 +4,7 @@ from data import database as db
 from tools import spt_requests as sp
 from tools import utilities as util
 import logging
+import asyncio
 
 class Spotify(commands.Cog):
     
@@ -28,7 +29,7 @@ class Spotify(commands.Cog):
     @sp.command()
     async def connect(self, ctx):
         '''Connect your Spotify'''
-        content = self.create_connect_embed(ctx.author.avatar_url)
+        content = self.create_connect_embed()
         await ctx.send(embed=content)
     
     @sp.command(aliases=['np'])
@@ -36,7 +37,7 @@ class Spotify(commands.Cog):
         '''Show currently playing track'''
         access_token = self.rtv_access_token(ctx.author.id)
         if not access_token:
-            await ctx.send(embed=self.create_connect_embed(ctx.author.avatar_url))
+            await ctx.send(embed=self.create_connect_embed())
         else:
             result = sp.internal_call('/v1/me/player/currently-playing', access_token)
             if result:
@@ -51,7 +52,7 @@ class Spotify(commands.Cog):
         '''Recently played tracks'''
         access_token = self.rtv_access_token(ctx.author.id)
         if not access_token:
-            await ctx.send(embed=self.create_connect_embed(ctx.author.avatar_url))
+            await ctx.send(embed=self.create_connect_embed())
         else:
             result = sp.internal_call(f'/v1/me/player/recently-played?limit=50', access_token)
             if result:
@@ -103,7 +104,7 @@ class Spotify(commands.Cog):
         time_range = util.get_time_range(time_range)
         access_token = self.rtv_access_token(ctx.author.id)
         if not access_token:
-            await ctx.send(embed=self.create_connect_embed(ctx.author.avatar_url))
+            await ctx.send(embed=self.create_connect_embed())
         else:
             result = sp.internal_call(f'/v1/me/top/tracks?time_range={time_range}&limit=50', access_token)
             if result:
@@ -126,6 +127,46 @@ class Spotify(commands.Cog):
             else:
                 await ctx.send('`an error occured`')
     
+    @sp.command(aliases=['dc'])
+    async def disconnect(self, ctx):
+        '''Disconnect Spotify account'''
+        icon = 'https://www.scdn.co/i/_global/touch-icon-72.png'
+        icon_colour = util.color_from_image(icon)
+        access_token = self.rtv_access_token(ctx.author.id)
+        if not access_token:
+            await ctx.send(embed=self.create_connect_embed())
+        else:
+            content = discord.Embed(title='Disconnect Spotify account', colour=int(icon_colour, 16))
+            content.description = 'Are you sure you would like to disconnect your spotify account?'
+            confirmation = await ctx.send(embed=content)
+
+            def event_check(payload):
+                if payload.user_id == ctx.bot.user.id:
+                    return False
+                return True
+
+            await confirmation.add_reaction('✅')
+            await confirmation.add_reaction('🚫')
+            while True:
+                try:
+                    reaction = await self.bot.wait_for('raw_reaction_add', timeout=90, check=event_check)
+                    if str(reaction.emoji) == '✅':
+                        db.delete_spt_user(ctx.author.id)
+                        content.description = 'Your account has been disconnected.'
+                        await confirmation.clear_reaction('✅')
+                        await confirmation.clear_reaction('🚫')
+                        await confirmation.edit(embed=content)
+                    elif str(reaction.emoji) == '🚫':
+                        content.description = 'User disconnect has been cancelled'
+                        await confirmation.clear_reaction('✅')
+                        await confirmation.clear_reaction('🚫')
+                        await confirmation.edit(embed=content)
+                except asyncio.exceptions.TimeoutError:
+                    content.description = 'Disconnect operation has timed out. resend command to retry.'
+                    await confirmation.clear_reaction('✅')
+                    await confirmation.clear_reaction('🚫')
+                    await confirmation.edit(embed=content)
+
     # helper functions
 
     def rtv_access_token(self, discord_id):
@@ -138,9 +179,11 @@ class Spotify(commands.Cog):
 
     # create embeds
 
-    def create_connect_embed(self, icon):
+    def create_connect_embed(self):
+        icon = 'https://www.scdn.co/i/_global/touch-icon-72.png'
+        icon_colour = util.color_from_image(icon)
         url = 'https://jiyoonbot.xyz/authorise/'
-        content = discord.Embed(colour = int('ffff00', 16))
+        content = discord.Embed(colour = int(icon_colour, 16))
         content.set_author(icon_url=icon,
             name="Connect your Spotify account")
         content.description = f"To utilise Spotify commands please click [here]({url}) to connect your account"

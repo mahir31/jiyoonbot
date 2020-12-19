@@ -76,6 +76,9 @@ def rtv_refresh_token(user_id):
     data = query("SELECT refresh_token FROM spt_users WHERE user_id=?", (user_id,))
     return data
 
+def delete_spt_user(user_id):
+    execute("DELETE FROM spt_users WHERE user_id=?", (user_id,))
+
 # fish cog queries
 
 def fisher_exists(fisher_id):

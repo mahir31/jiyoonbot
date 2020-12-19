@@ -4,7 +4,7 @@ from discord.ext import commands
 
 class helpembeds(commands.HelpCommand):
     
-    COLOUR = int('ffff00', 16)
+    COLOUR = int('4eca58', 16)
 
     def add_aliases(self, embed, mapping):
         if mapping.aliases:

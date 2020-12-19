@@ -25,7 +25,8 @@ bot = commands.Bot(
 
 @bot.event
 async def on_ready():
-	logging.info(f"{bot.user.name} - {bot.user.id}\nVersion: {discord.__version__}")
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='jiyoonbot.xyz'))
+    logging.info(f"{bot.user.name} - {bot.user.id}\nVersion: {discord.__version__}")
 
 @bot.before_invoke
 async def before_any_command(ctx):
