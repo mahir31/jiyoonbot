@@ -51,10 +51,7 @@ class fish(commands.Cog):
             last_fished = util.stringfromtimestamp(last_fished.seconds)
             content = discord.Embed(title=f"Fisher {util.displayname(ctx.author)}'s profile", 
             colour=int(colour, 16))
-            content.description = f"""🎣 Total times fished: {fisher[0][1]}
-            🐋 Total Fish caught: {fisher[0][2]}
-            ⏲️ Last fished: {last_fished} ago
-            🌟 Experience points: {fisher[0][4]}"""
+            content.description = f"""🎣 Total times fished: {fisher[0][1]}\n🐋 Total Fish caught: {fisher[0][2]}\n⏲️ Last fished: {last_fished} ago\n🌟 Experience points: {fisher[0][4]}"""
             await ctx.send(embed=content)
         else:
             await ctx.send('You have not fished before, please fish before checking your profile!')

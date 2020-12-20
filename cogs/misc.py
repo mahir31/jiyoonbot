@@ -11,7 +11,7 @@ class misc(commands.Cog):
     
     @commands.Cog.listener()
     async def on_ready(self):
-        logging.info('cog:misc.py connected')
+        logging.info('cog: misc.py connected')
     
     # commands
 
