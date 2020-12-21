@@ -108,7 +108,7 @@ async def paginate(ctx, items, author, colour, thumbnail, display_picture):
                 index += 1
                 await page.edit(embed=pages[index])
                 await page.remove_reaction(reaction.emoji, ctx.bot.get_user(reaction.user_id))
-        except asyncio.exceptions.TimeoutError:
+        except asyncio.TimeoutError:
             await page.clear_reaction('◀️')
             await page.clear_reaction('▶️')
 
