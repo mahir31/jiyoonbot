@@ -23,6 +23,11 @@ class fish(commands.Cog):
     @commands.group(case_insensitive=True)
     async def fs(self, ctx):
         '''Fishing Commands:'''
+        
+        if ctx.invoked_subcommand is None:
+            content = discord.Embed(colour=colour)
+            content.description = "Looks like we're missing some stuff to complete this command, type `$help fs` to get some help"
+            await ctx.send(embed=content)
     
     @fs.command()
     async def go(self, ctx):
@@ -77,19 +82,21 @@ class fish(commands.Cog):
     async def go_fishing(self, ctx, fisher):
         catch = random.randint(0, 1)
         if bool(catch) == True:
-            await ctx.send('Something is on the line, type `"catch"` to reel it in!')
+            content = discord.Embed(colour=colour)
+            content.description = 'Something is on the line, type `"catch"` to reel it in!'
+            await ctx.send(embed=content)
             try:
                 response = await self.bot.wait_for('message', check=self.catch_check, timeout=15)
                 if response:
                     catch = random.randint(0, 1)
                     if bool(catch) == True:
-                        await self.award_fish(ctx, fisher, True, 8, '🌟 Congratulations, you caught 1 fish and are awarded 8 xp!')
+                        await self.award_fish(ctx, fisher, True, 8, '🌟 Congratulations, you caught **1 fish** and are awarded **8 xp!**')
                     else:
-                        await self.award_fish(ctx, fisher, False, 4, '⭐ You tried your hardest to reel it in but the fish slipped away, you gain only 4 xp, better luck next time.')
+                        await self.award_fish(ctx, fisher, False, 4, '⭐ You tried your hardest to reel it in but the fish slipped away, you gain only **4 xp**, better luck next time.')
             except asyncio.TimeoutError:
-                await self.award_fish(ctx, fisher, False, 2, '🎇 Oops, the fish escaped before you could reel it in, you gain 2 xp ')
+                await self.award_fish(ctx, fisher, False, 2, '🎇 Oops, the fish escaped before you could reel it in, you gain **2 xp**')
         else:
-            await self.award_fish(ctx, fisher, False, 1, '🎇 You cast your reel, but sadly no fish took the bait, you gain 1 xp try again later')
+            await self.award_fish(ctx, fisher, False, 1, '🎇 You cast your reel, but sadly no fish took the bait, you gain **1 xp** try again later')
 
     async def award_fish(self, ctx, fisher, success, exp, message):
         fisher_id, times_fished, total_fish, last_fished, exp_points, coins = fisher[0]
