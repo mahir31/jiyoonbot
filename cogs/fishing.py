@@ -25,7 +25,7 @@ class fish(commands.Cog):
         '''Fishing Commands:'''
         
         if ctx.invoked_subcommand is None:
-            content = discord.Embed(colour=colour)
+            content = discord.Embed(colour=int(colour, 16))
             content.description = "Looks like we're missing some stuff to complete this command, type `$help fs` to get some help"
             await ctx.send(embed=content)
     
@@ -82,7 +82,7 @@ class fish(commands.Cog):
     async def go_fishing(self, ctx, fisher):
         catch = random.randint(0, 1)
         if bool(catch) == True:
-            content = discord.Embed(colour=colour)
+            content = discord.Embed(colour=int(colour, 16))
             content.description = 'Something is on the line, type `"catch"` to reel it in!'
             await ctx.send(embed=content)
             try:
