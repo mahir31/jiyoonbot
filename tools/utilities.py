@@ -3,7 +3,6 @@ import discord
 from urllib.request import urlopen
 import io
 import asyncio
-from asyncio import exceptions
 from colorthief import ColorThief
 from discord.ext import commands
 
@@ -109,7 +108,7 @@ async def paginate(ctx, items, author, colour, thumbnail, display_picture):
                 index += 1
                 await page.edit(embed=pages[index])
                 await page.remove_reaction(reaction.emoji, ctx.bot.get_user(reaction.user_id))
-        except exceptions.TimeoutError:
+        except asyncio.exceptions.TimeoutError:
             await page.clear_reaction('◀️')
             await page.clear_reaction('▶️')
 
