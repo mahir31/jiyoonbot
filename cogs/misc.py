@@ -19,9 +19,7 @@ class misc(commands.Cog):
     async def about(self, ctx):
         '''Bot information'''
         content = discord.Embed(title='About:', colour=colour)
-        content.description = '''Name: Jiyoon Bot
-        Version: 1.02
-        Developer: doublesocks#3034'''
+        content.description = '''Name: Jiyoon Bot\nVersion: 1.02\nDeveloper: doublesocks#3034'''
         await ctx.send(embed=content)
 
 def setup(bot):
