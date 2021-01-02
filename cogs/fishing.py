@@ -87,7 +87,6 @@ class fish(commands.Cog):
 
     async def go_fishing(self, ctx, fisher):
         catch = random.randint(0, 1)
-        catch = 1
         if bool(catch) == True:
             content = discord.Embed(colour=int(colour, 16))
             content.description = 'Something is on the line, type `"catch"` to reel it in!'
