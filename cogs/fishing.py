@@ -87,13 +87,16 @@ class fish(commands.Cog):
 
     async def go_fishing(self, ctx, fisher):
         catch = random.randint(0, 1)
+        catch = 1
         if bool(catch) == True:
             content = discord.Embed(colour=int(colour, 16))
             content.description = 'Something is on the line, type `"catch"` to reel it in!'
             await ctx.send(embed=content)
             try:
                 response = await self.bot.wait_for('message', check=self.catch_check, timeout=15)
-                if response:
+                response = response.content
+                response = response.lower()
+                if response == 'catch':
                     catch = random.randint(0, 1)
                     if bool(catch) == True:
                         await self.award_fish(ctx, fisher, True, 8, '🌟 Congratulations, you caught **1 fish** and are awarded **8 xp!**')
@@ -117,7 +120,9 @@ class fish(commands.Cog):
         await ctx.send(embed=content)
 
     def catch_check(ctx, payload):
-        return payload.content == 'catch'
+        payload = payload.content
+        payload = payload.lower()
+        return payload == 'catch'
     
     def cooldown_calc(self, last_fished):
         cooldown = 1800
