@@ -59,7 +59,9 @@ class fish(commands.Cog):
             content.description = f"""🎣 Total times fished: {fisher[0][1]}\n🐋 Total Fish caught: {fisher[0][2]}\n⏲️ Last fished: {last_fished} ago\n🌟 Experience points: {fisher[0][4]}"""
             await ctx.send(embed=content)
         else:
-            await ctx.send('You have not fished before, please fish before checking your profile!')
+            content = discord.Embed(colour=int(colour, 16))
+            content.description = 'You have not fished before, please fish before checking your profile!'
+            await ctx.send(embed=content)
     
     @fs.command(aliases=['rm'])
     async def reminder(self, ctx):
@@ -76,6 +78,10 @@ class fish(commands.Cog):
                 content = discord.Embed(colour=int(colour, 16))
                 content.description = f'⏱️ You feel tired and reckon you can go fishing in around **{util.stringfromtimestamp(can_fish)}**'
                 await ctx.send(embed=content)
+        else:
+            content = discord.Embed(colour=int(colour, 16))
+            content.description = '⏰ You feel refreshed and alert, time to go fishing!'
+            await ctx.send(embed=content)
     
     # helper functions
 
