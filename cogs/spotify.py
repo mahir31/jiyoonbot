@@ -168,12 +168,12 @@ class Spotify(commands.Cog):
                 await ctx.send('`an error occured`')
     
     @sp.command(aliases=['sa'])
-    async def searchartist(self, ctx, query=None):
+    async def searchartist(self, ctx, *query):
         access_token = self.rtv_access_token(ctx.author.id)
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
-            if query == None:
+            if query[0] == 'np':
                 result = sp.internal_call('/v1/me/player/currently-playing', access_token)
                 if result:
                     result = result['item']['artists'][0]['id']
@@ -185,7 +185,9 @@ class Spotify(commands.Cog):
                     esult = sp.internal_call(f'/v1/artists/{result}', access_token)
                     await ctx.send(embed=self.create_artist_embed(result))
             else:
-                pass
+                query = '%20'.join(query)
+                result = sp.internal_call(f'/v1/search?q={query}&type=artist&limit=1', access_token)
+                await ctx.send(embed=self.create_artist_embed(result['artists']['items'][0]))
 
     # helper functions
 
