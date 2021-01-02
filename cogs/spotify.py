@@ -176,14 +176,14 @@ class Spotify(commands.Cog):
             if query[0] == 'np':
                 result = sp.internal_call('/v1/me/player/currently-playing', access_token)
                 if result:
-                    result = result['item']['artists'][0]['id']
-                    result = sp.internal_call(f'/v1/artists/{result}', access_token)
-                    await ctx.send(embed=self.create_artist_embed(result))
+                    artist = sp.internal_call(f'/v1/artists/{result["item"]["artists"][0]["id"]}', access_token)
+                    top_tracks = result = internal_call(f'/v1/artists/{result["item"]["artists"][0]["id"]}/top-tracks?country=from_token', access_token)
+                    await ctx.send(embed=self.create_artist_embed(artist))
                 else:
                     result = sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
-                    result = result['items'][0]['track']['artists'][0]['id']
-                    esult = sp.internal_call(f'/v1/artists/{result}', access_token)
-                    await ctx.send(embed=self.create_artist_embed(result))
+                    artist = sp.internal_call(f'/v1/artists/{result["items"][0]["track"]["artists"][0]["id"]}', access_token)
+                    top_tracks = result = internal_call(f'/v1/artists/{result["items"][0]["track"]["artists"][0]["id"]}/top-tracks?country=from_token', access_token)
+                    await ctx.send(embed=self.create_artist_embed(artist))
             else:
                 query = '%20'.join(query)
                 result = sp.internal_call(f'/v1/search?q={query}&type=artist&limit=1', access_token)
