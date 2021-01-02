@@ -31,6 +31,46 @@ class Spotify(commands.Cog):
         '''Connect your Spotify'''
         content = self.create_connect_embed()
         await ctx.send(embed=content)
+
+    @sp.command(aliases=['dc'])
+    async def disconnect(self, ctx):
+        '''Disconnect Spotify account'''
+        icon = 'https://www.scdn.co/i/_global/touch-icon-72.png'
+        icon_colour = util.color_from_image(icon)
+        access_token = self.rtv_access_token(ctx.author.id)
+        if not access_token:
+            await ctx.send(embed=self.create_connect_embed())
+        else:
+            content = discord.Embed(title='Disconnect Spotify account', colour=int(icon_colour, 16))
+            content.description = 'Are you sure you would like to disconnect your spotify account?'
+            confirmation = await ctx.send(embed=content)
+
+            def event_check(payload):
+                if payload.user_id == ctx.bot.user.id:
+                    return False
+                return True
+
+            await confirmation.add_reaction('✅')
+            await confirmation.add_reaction('🚫')
+            while True:
+                try:
+                    reaction = await self.bot.wait_for('raw_reaction_add', timeout=90, check=event_check)
+                    if str(reaction.emoji) == '✅':
+                        db.delete_spt_user(ctx.author.id)
+                        content.description = 'Your account has been disconnected.'
+                        await confirmation.clear_reaction('✅')
+                        await confirmation.clear_reaction('🚫')
+                        await confirmation.edit(embed=content)
+                    elif str(reaction.emoji) == '🚫':
+                        content.description = 'User disconnect has been cancelled'
+                        await confirmation.clear_reaction('✅')
+                        await confirmation.clear_reaction('🚫')
+                        await confirmation.edit(embed=content)
+                except asyncio.exceptions.TimeoutError:
+                    content.description = 'Disconnect operation has timed out. resend command to retry.'
+                    await confirmation.clear_reaction('✅')
+                    await confirmation.clear_reaction('🚫')
+                    await confirmation.edit(embed=content)
     
     @sp.command(aliases=['np'])
     async def nowplaying(self, ctx):
@@ -127,45 +167,25 @@ class Spotify(commands.Cog):
             else:
                 await ctx.send('`an error occured`')
     
-    @sp.command(aliases=['dc'])
-    async def disconnect(self, ctx):
-        '''Disconnect Spotify account'''
-        icon = 'https://www.scdn.co/i/_global/touch-icon-72.png'
-        icon_colour = util.color_from_image(icon)
+    @sp.command(aliases=['sa'])
+    async def searchartist(self, ctx, query=None):
         access_token = self.rtv_access_token(ctx.author.id)
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
-            content = discord.Embed(title='Disconnect Spotify account', colour=int(icon_colour, 16))
-            content.description = 'Are you sure you would like to disconnect your spotify account?'
-            confirmation = await ctx.send(embed=content)
-
-            def event_check(payload):
-                if payload.user_id == ctx.bot.user.id:
-                    return False
-                return True
-
-            await confirmation.add_reaction('✅')
-            await confirmation.add_reaction('🚫')
-            while True:
-                try:
-                    reaction = await self.bot.wait_for('raw_reaction_add', timeout=90, check=event_check)
-                    if str(reaction.emoji) == '✅':
-                        db.delete_spt_user(ctx.author.id)
-                        content.description = 'Your account has been disconnected.'
-                        await confirmation.clear_reaction('✅')
-                        await confirmation.clear_reaction('🚫')
-                        await confirmation.edit(embed=content)
-                    elif str(reaction.emoji) == '🚫':
-                        content.description = 'User disconnect has been cancelled'
-                        await confirmation.clear_reaction('✅')
-                        await confirmation.clear_reaction('🚫')
-                        await confirmation.edit(embed=content)
-                except asyncio.exceptions.TimeoutError:
-                    content.description = 'Disconnect operation has timed out. resend command to retry.'
-                    await confirmation.clear_reaction('✅')
-                    await confirmation.clear_reaction('🚫')
-                    await confirmation.edit(embed=content)
+            if query == None:
+                result = sp.internal_call('/v1/me/player/currently-playing', access_token)
+                if result:
+                    result = result['item']['artists'][0]['id']
+                    result = sp.internal_call(f'/v1/artists/{result}', access_token)
+                    await ctx.send(embed=self.create_artist_embed(result))
+                else:
+                    result = sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
+                    result = result['items'][0]['track']['artists'][0]['id']
+                    esult = sp.internal_call(f'/v1/artists/{result}', access_token)
+                    await ctx.send(embed=self.create_artist_embed(result))
+            else:
+                pass
 
     # helper functions
 
@@ -205,7 +225,7 @@ class Spotify(commands.Cog):
         content.set_author(name=util.displayname(user) + " is now playing",
             icon_url=user.avatar_url,
             url=track_url)
-        content.set_footer(text=f'Popularity: {popularity}')
+        content.set_footer(text=f'`Popularity: {popularity}`')
         return content
     
     def create_recently_played_embed(self, recently_played, user):
@@ -224,9 +244,17 @@ class Spotify(commands.Cog):
         content.set_author(name=util.displayname(user) + ' has most recently played:',
             icon_url=user.avatar_url,
             url=track_url)
-        content.set_footer(text=f'Popularity: {popularity}')
+        content.set_footer(text=f'`Popularity: {popularity}`')
         return content
-
+    
+    def create_artist_embed(self, artist):
+        content = discord.Embed(colour=int(util.color_from_image(artist['images'][0]['url']), 16))
+        content.add_field(name='Popularity:', value=f'`{artist["popularity"]}`', inline=True)
+        content.add_field(name='Genres:', value=f'`{" ".join(artist["genres"])}`', inline=True)
+        content.set_image(url=artist['images'][0]['url'])
+        content.set_author(name=f'Artist: {artist["name"]}',
+            url=artist['external_urls']['spotify'])
+        return content
 
 def setup(bot):
     bot.add_cog(Spotify(bot))
