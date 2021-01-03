@@ -177,17 +177,21 @@ class Spotify(commands.Cog):
                 result = sp.internal_call('/v1/me/player/currently-playing', access_token)
                 if result:
                     artist = sp.internal_call(f'/v1/artists/{result["item"]["artists"][0]["id"]}', access_token)
-                    top_tracks = result = internal_call(f'/v1/artists/{result["item"]["artists"][0]["id"]}/top-tracks?country=from_token', access_token)
-                    await ctx.send(embed=self.create_artist_embed(artist))
+                    top_tracks = sp.internal_call(f'/v1/artists/{result["item"]["artists"][0]["id"]}/top-tracks?country=from_token', access_token)
+                    top_tracks = self.linked_tracks(top_tracks)
+                    await ctx.send(embed=self.create_artist_embed(artist, top_tracks))
                 else:
                     result = sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
                     artist = sp.internal_call(f'/v1/artists/{result["items"][0]["track"]["artists"][0]["id"]}', access_token)
-                    top_tracks = result = internal_call(f'/v1/artists/{result["items"][0]["track"]["artists"][0]["id"]}/top-tracks?country=from_token', access_token)
-                    await ctx.send(embed=self.create_artist_embed(artist))
+                    top_tracks = sp.internal_call(f'/v1/artists/{result["items"][0]["track"]["artists"][0]["id"]}/top-tracks?country=from_token', access_token)
+                    top_tracks = self.linked_tracks(top_tracks)
+                    await ctx.send(embed=self.create_artist_embed(artist, top_tracks))
             else:
                 query = '%20'.join(query)
-                result = sp.internal_call(f'/v1/search?q={query}&type=artist&limit=1', access_token)
-                await ctx.send(embed=self.create_artist_embed(result['artists']['items'][0]))
+                artist = sp.internal_call(f'/v1/search?q={query}&type=artist&limit=1', access_token)
+                top_tracks = sp.internal_call(f'/v1/artists/{artist["artists"]["items"][0]["id"]}/top-tracks?country=from_token', access_token)
+                top_tracks = self.linked_tracks(top_tracks)
+                await ctx.send(embed=self.create_artist_embed(artist['artists']['items'][0], top_tracks))
 
     # helper functions
 
@@ -198,6 +202,15 @@ class Spotify(commands.Cog):
             return access_token
         else:
             return None
+    
+    def linked_tracks(self, tracks):
+        names = [t['name'] for t in tracks['tracks']]
+        links = [t['external_urls']['spotify'] for t in tracks['tracks']]
+        content = []
+        for names, links in zip(names, links):
+            x = f'[{names}]({links})'
+            content.append(x)
+        return content
 
     # create embeds
 
@@ -249,13 +262,15 @@ class Spotify(commands.Cog):
         content.set_footer(text=f'`Popularity: {popularity}`')
         return content
     
-    def create_artist_embed(self, artist):
+    def create_artist_embed(self, artist, top_tracks):
         content = discord.Embed(colour=int(util.color_from_image(artist['images'][0]['url']), 16))
         content.add_field(name='Popularity:', value=f'`{artist["popularity"]}`', inline=True)
         content.add_field(name='Genres:', value=f'`{" ".join(artist["genres"])}`', inline=True)
         content.set_image(url=artist['images'][0]['url'])
         content.set_author(name=f'Artist: {artist["name"]}',
             url=artist['external_urls']['spotify'])
+        top_tracks = ', '.join(top_tracks)
+        content.description = f'**Top tracks**: {top_tracks}'
         return content
 
 def setup(bot):
