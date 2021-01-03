@@ -173,25 +173,32 @@ class Spotify(commands.Cog):
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
-            if query[0] == 'np':
-                result = sp.internal_call('/v1/me/player/currently-playing', access_token)
-                if result:
-                    artist = sp.internal_call(f'/v1/artists/{result["item"]["artists"][0]["id"]}', access_token)
-                    top_tracks = sp.internal_call(f'/v1/artists/{result["item"]["artists"][0]["id"]}/top-tracks?country=from_token', access_token)
-                    top_tracks = self.linked_tracks(top_tracks)
-                    await ctx.send(embed=self.create_artist_embed(artist, top_tracks))
+            try:
+                if query[0] == 'np':
+                    result = sp.internal_call('/v1/me/player/currently-playing', access_token)
+                    if result:
+                        artist = sp.internal_call(f'/v1/artists/{result["item"]["artists"][0]["id"]}', access_token)
+                        top_tracks = sp.internal_call(f'/v1/artists/{result["item"]["artists"][0]["id"]}/top-tracks?country=from_token', access_token)
+                        top_tracks = self.linked_tracks(top_tracks)
+                        await ctx.send(embed=self.create_artist_embed(artist, top_tracks))
+                    else:
+                        result = sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
+                        artist = sp.internal_call(f'/v1/artists/{result["items"][0]["track"]["artists"][0]["id"]}', access_token)
+                        top_tracks = sp.internal_call(f'/v1/artists/{result["items"][0]["track"]["artists"][0]["id"]}/top-tracks?country=from_token', access_token)
+                        top_tracks = self.linked_tracks(top_tracks)
+                        await ctx.send(embed=self.create_artist_embed(artist, top_tracks))
                 else:
-                    result = sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
-                    artist = sp.internal_call(f'/v1/artists/{result["items"][0]["track"]["artists"][0]["id"]}', access_token)
-                    top_tracks = sp.internal_call(f'/v1/artists/{result["items"][0]["track"]["artists"][0]["id"]}/top-tracks?country=from_token', access_token)
+                    query = '%20'.join(query)
+                    artist = sp.internal_call(f'/v1/search?q={query}&type=artist&limit=1', access_token)
+                    top_tracks = sp.internal_call(f'/v1/artists/{artist["artists"]["items"][0]["id"]}/top-tracks?country=from_token', access_token)
                     top_tracks = self.linked_tracks(top_tracks)
-                    await ctx.send(embed=self.create_artist_embed(artist, top_tracks))
-            else:
-                query = '%20'.join(query)
-                artist = sp.internal_call(f'/v1/search?q={query}&type=artist&limit=1', access_token)
-                top_tracks = sp.internal_call(f'/v1/artists/{artist["artists"]["items"][0]["id"]}/top-tracks?country=from_token', access_token)
-                top_tracks = self.linked_tracks(top_tracks)
-                await ctx.send(embed=self.create_artist_embed(artist['artists']['items'][0], top_tracks))
+                    await ctx.send(embed=self.create_artist_embed(artist['artists']['items'][0], top_tracks))
+            except IndexError:
+                content = discord.Embed(colour=int(util.color_from_image('https://www.scdn.co/i/_global/touch-icon-72.png'), 16))
+                content.description = "Looks like you're missing a few things, give me the name of the artist you're looking for or type 'np' to look for the artist you're listening to now."
+                content.set_author(name='Error:',
+                    icon_url='https://www.scdn.co/i/_global/touch-icon-72.png')
+                await ctx.send(embed=content)
 
     # helper functions
 
