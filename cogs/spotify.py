@@ -169,6 +169,7 @@ class Spotify(commands.Cog):
     
     @sp.command(aliases=['sa'])
     async def searchartist(self, ctx, *query):
+        '''search for an artist on spotify'''
         access_token = self.rtv_access_token(ctx.author.id)
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
