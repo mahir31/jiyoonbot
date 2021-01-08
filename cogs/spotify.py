@@ -200,6 +200,30 @@ class Spotify(commands.Cog):
                 content.set_author(name='Error:',
                     icon_url='https://www.scdn.co/i/_global/touch-icon-72.png')
                 await ctx.send(embed=content)
+    
+    @sp.command(aliases=['rc'])
+    async def recommendations(self, ctx):
+        '''recommendations generated from spotify based on users top tracks, top artists and top genres'''
+        access_token = self.rtv_access_token(ctx.author.id)
+        if not access_token:
+            await ctx.send(embed=self.create_connect_embed())
+        else:
+            result = sp.internal_call('/v1/me/top/artists?limit=1&time_range=short_term', access_token)
+            seed_genre = result['items'][0]['genres'][0]
+            seed_artist = result['items'][0]['id']
+            result = sp.internal_call('/v1/me/top/tracks?limit=1&time_range=short_term', access_token)
+            seed_track = result['items'][0]['id']
+            result = sp.internal_call(f'/v1/recommendations?seed_genres={seed_genre}&seed_artists={seed_artist}&seed_tracks={seed_track}&limit=1', access_token)
+            recommendation = result['tracks'][0]
+            artists = ', '.join([a['name'] for a in recommendation['artists']])
+            content = discord.Embed(colour=int(util.color_from_image(recommendation['album']['images'][0]['url']), 16))
+            content.description = f'{recommendation["album"]["name"]}'
+            content.title = f'{artists} - {recommendation["name"]}'
+            content.set_thumbnail(url=recommendation['album']['images'][0]['url'])
+            content.set_author(name=f"{util.displayname(ctx.author)}'s recommendation from Spotify:",
+                url=recommendation['external_urls']['spotify'],
+                icon_url='https://www.scdn.co/i/_global/touch-icon-72.png')
+            await ctx.send(embed=content)
 
     # helper functions
 
