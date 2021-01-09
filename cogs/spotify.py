@@ -189,8 +189,7 @@ class Spotify(commands.Cog):
                         top_tracks = self.linked_tracks(top_tracks)
                         await ctx.send(embed=self.create_artist_embed(artist, top_tracks))
                 else:
-                    query = '%20'.join(query)
-                    artist = sp.internal_call(f'/v1/search?q={query}&type=artist&limit=1', access_token)
+                    artist = self.spotify_search(query, query_type='artist', access_token=access_token)
                     top_tracks = sp.internal_call(f'/v1/artists/{artist["artists"]["items"][0]["id"]}/top-tracks?country=from_token', access_token)
                     top_tracks = self.linked_tracks(top_tracks)
                     await ctx.send(embed=self.create_artist_embed(artist['artists']['items'][0], top_tracks))
@@ -201,9 +200,19 @@ class Spotify(commands.Cog):
                     icon_url='https://www.scdn.co/i/_global/touch-icon-72.png')
                 await ctx.send(embed=content)
     
+    @sp.command(aliases=['salb'])
+    async def searchalbum(self, ctx, *query):
+        '''search for an album on spotify'''
+        access_token = self.rtv_access_token(ctx.author.id)
+        if not access_token:
+            await ctx.send(embed=self.create_connect_embed())
+        else:
+            album = self.spotify_search(query, query_type='album', access_token=access_token)
+            await ctx.send(str(album))
+    
     @sp.command(aliases=['rc'])
     async def recommendations(self, ctx):
-        '''recommendations generated from spotify based on users top tracks, top artists and top genres'''
+        '''recommendations generated from Spotify based on users top tracks, top artists and top genres'''
         access_token = self.rtv_access_token(ctx.author.id)
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
@@ -244,6 +253,11 @@ class Spotify(commands.Cog):
             x = f'[{names}]({links})'
             content.append(x)
         return content
+    
+    def spotify_search(self, query, query_type, access_token):
+        query = '%20'.join(query)
+        result = sp.internal_call(f'/v1/search?q={query}&type={query_type}&limit=1', access_token)
+        return result
 
     # create embeds
 
