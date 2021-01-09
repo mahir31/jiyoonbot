@@ -217,12 +217,13 @@ class Spotify(commands.Cog):
             recommendation = result['tracks'][0]
             artists = ', '.join([a['name'] for a in recommendation['artists']])
             content = discord.Embed(colour=int(util.color_from_image(recommendation['album']['images'][0]['url']), 16))
-            content.description = f'{recommendation["album"]["name"]}'
+            content.description = f'{recommendation["album"]["name"]}\nClick [here]({recommendation["external_urls"]["spotify"]}) to go to the track'
             content.title = f'{artists} - {recommendation["name"]}'
-            content.set_thumbnail(url=recommendation['album']['images'][0]['url'])
-            content.set_author(name=f"{util.displayname(ctx.author)}'s recommendation from Spotify:",
+            content.set_image(url=recommendation['album']['images'][0]['url'])
+            content.set_author(name=f"✨{util.displayname(ctx.author)}'s Spotify recommendation!",
                 url=recommendation['external_urls']['spotify'],
                 icon_url='https://www.scdn.co/i/_global/touch-icon-72.png')
+            content.set_footer(text=f"Popularity: {recommendation['popularity']}")
             await ctx.send(embed=content)
 
     # helper functions
