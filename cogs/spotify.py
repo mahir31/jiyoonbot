@@ -5,6 +5,9 @@ from tools import spt_requests as sp
 from tools import utilities as util
 import logging
 import asyncio
+from PIL import Image
+from io import BytesIO
+import requests
 
 class Spotify(commands.Cog):
     
@@ -251,6 +254,29 @@ class Spotify(commands.Cog):
                 icon_url='https://www.scdn.co/i/_global/touch-icon-72.png')
             content.set_footer(text=f"Popularity: {recommendation['popularity']}")
             await ctx.send(embed=content)
+    
+    @sp.command()
+    async def test(self, ctx):
+        access_token = self.rtv_access_token(ctx.author.id)
+        result = sp.internal_call('/v1/me/top/tracks?limit=1&time_range=medium_term', access_token)
+        seed_track = result['items'][0]['id']
+        result = sp.internal_call(f'/v1/recommendations?seed_tracks={seed_track}&limit=9', access_token)
+        result = [x['album']['images'][0]['url'] for x in result['tracks']]
+        songimg = Image.new('RGB', (1920, 1920))
+        xpos = 0
+        ypos = 0
+        for x in range(0, len(result)):
+            image = requests.get(result[x])
+            image = Image.open(BytesIO(image.content))
+            songimg.paste(image, (xpos,ypos))
+            xpos += 640
+            if(xpos == 1920):
+                xpos = 0
+                ypos += 640
+        with BytesIO() as image_binary:
+            songimg.save(image_binary, 'png')
+            image_binary.seek(0)
+            await ctx.send(file=discord.File(fp=image_binary, filename='test.png'))
 
     # helper functions
 
