@@ -207,8 +207,25 @@ class Spotify(commands.Cog):
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
-            album = self.spotify_search(query, query_type='album', access_token=access_token)
-            await ctx.send(str(album))
+            try:
+                if query[0] == 'np':
+                    result = sp.internal_call('/v1/me/player/currently-playing', access_token)
+                    if result:
+                        result = result['item']['album']
+                        await ctx.send(str(result))
+                    else:
+                        result = sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
+                        result = result['items'][0]['track']['album']
+                        await ctx.send(str(result))
+                else:
+                    result = self.spotify_search(query, query_type='album', access_token=access_token)
+                    await ctx.send(str(result['albums']['items'][0]['name']))
+            except IndexError:
+                content = discord.Embed(colour=int(util.color_from_image('https://www.scdn.co/i/_global/touch-icon-72.png'), 16))
+                content.description = "Looks like you're missing a few things, give me the name of the album you're looking for or type 'np' to look for the album you're listening to now."
+                content.set_author(name='Error:',
+                    icon_url='https://www.scdn.co/i/_global/touch-icon-72.png')
+                await ctx.send(embed=content)
     
     @sp.command(aliases=['rc'])
     async def recommendations(self, ctx):
