@@ -8,6 +8,7 @@ import asyncio
 from PIL import Image
 from io import BytesIO
 import requests
+import os
 
 class Spotify(commands.Cog):
     
@@ -273,10 +274,12 @@ class Spotify(commands.Cog):
             if(xpos == 1920):
                 xpos = 0
                 ypos += 640
-        with BytesIO() as image_binary:
-            songimg.save(image_binary, 'png')
-            image_binary.seek(0)
-            await ctx.send(file=discord.File(fp=image_binary, filename='test.png'))
+        songimg.save('image.png')
+        content = discord.Embed(colour=int(util.color_from_image('https://www.scdn.co/i/_global/touch-icon-72.png'), 16))
+        file = discord.File('image.png', filename='image.png')
+        content.set_image(url='attachment://image.png')
+        await ctx.send(file=file, embed=content)
+        os.remove('image.png')
 
     # helper functions
 
