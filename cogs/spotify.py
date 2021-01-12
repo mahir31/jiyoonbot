@@ -328,7 +328,7 @@ class Spotify(commands.Cog):
         content.set_author(name=util.displayname(user) + " is now playing",
             icon_url=user.avatar_url,
             url=track_url)
-        content.set_footer(text=f'`Popularity: {popularity}`')
+        content.set_footer(text=f'Popularity: {popularity}')
         return content
     
     def create_recently_played_embed(self, recently_played, user):
@@ -347,7 +347,7 @@ class Spotify(commands.Cog):
         content.set_author(name=util.displayname(user) + ' has most recently played:',
             icon_url=user.avatar_url,
             url=track_url)
-        content.set_footer(text=f'`Popularity: {popularity}`')
+        content.set_footer(text=f'Popularity: {popularity}')
         return content
     
     def create_artist_embed(self, artist, top_tracks):
