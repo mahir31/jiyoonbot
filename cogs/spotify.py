@@ -9,6 +9,8 @@ from PIL import Image
 from io import BytesIO
 import requests
 import os
+import matplotlib.pyplot as plt
+from palettable.colorbrewer.qualitative import Pastel1_7
 
 class Spotify(commands.Cog):
     
@@ -281,9 +283,27 @@ class Spotify(commands.Cog):
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
-            result = sp.internal_call('/v1/me/player/currently-playing', access_token)
-            result = sp.internal_call(f'/v1/audio-features/{result["item"]["id"]}', access_token)
-            await ctx.send(str(result))
+            track = sp.internal_call('/v1/me/player/currently-playing', access_token)
+            features = sp.internal_call(f'/v1/audio-features/{track["item"]["id"]}', access_token)
+            names = f'danceability ({features["danceability"]})', f'energy ({features["energy"]})', f'speechiness ({features["speechiness"]})', f'acousticness ({features["acousticness"]})', f'liveness ({features["liveness"]})', f'valence ({features["valence"]})'
+            size = [features['danceability'],
+                features['energy'], 
+                features['speechiness'], 
+                features['acousticness'], 
+                features['liveness'], 
+                features['valence']]
+            center_circle=plt.Circle( (0,0), 0.7, color='white')
+            plt.pie(size, labels=names, colors=Pastel1_7.hex_colors)
+            p=plt.gcf()
+            plt.gca().add_artist(center_circle)
+            plt.title(f"Spotify catalog information for: {track['item']['name']} by {track['item']['artists'][0]['name']}")
+            plt.savefig('chart.jpeg')
+            file = discord.File('chart.jpeg', filename='chart.jpeg')
+            content = discord.Embed(colour=int(util.color_from_image('https://www.scdn.co/i/_global/touch-icon-72.png'), 16))
+            content.set_image(url='attachment://chart.jpeg')
+            await ctx.send(file=file, embed=content)
+            os.remove('chart.jpeg')
+            plt.clf()
 
     # helper functions
 
