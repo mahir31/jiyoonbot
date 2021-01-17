@@ -215,15 +215,13 @@ class Spotify(commands.Cog):
                 if query[0] == 'np':
                     result = sp.internal_call('/v1/me/player/currently-playing', access_token)
                     if result:
-                        result = result['item']['album']
-                        await ctx.send(str(result))
+                        await ctx.send(embed=self.create_album_embed(result['item']['album']))
                     else:
                         result = sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
-                        result = result['items'][0]['track']['album']
-                        await ctx.send(str(result))
+                        await ctx.send(embed=self.create_album_embed(result['items'][0]['track']['album']))
                 else:
                     result = self.spotify_search(query, query_type='album', access_token=access_token)
-                    await ctx.send(str(result['albums']['items'][0]['name']))
+                    await ctx.send(embed=self.create_album_embed(result['albums']['items'][0]))
             except IndexError:
                 content = discord.Embed(colour=int(util.color_from_image('https://www.scdn.co/i/_global/touch-icon-72.png'), 16))
                 content.description = "Looks like you're missing a few things, give me the name of the album you're looking for or type 'np' to look for the album you're listening to now."
@@ -359,6 +357,18 @@ class Spotify(commands.Cog):
             url=artist['external_urls']['spotify'])
         top_tracks = ', '.join(top_tracks)
         content.description = f'**Top tracks**: {top_tracks}'
+        return content
+
+    def create_album_embed(self, album):
+        artists = ', '.join([a['name'] for a in album['artists']])
+        content = discord.Embed(colour=int(util.color_from_image(album['images'][1]['url']), 16))
+        content.set_image(url=album['images'][0]['url'])
+        content.set_author(name=f'Album: {album["name"]}',
+            url=album['external_urls']['spotify'])
+        content.add_field(name='Artist:', value=f'`{artists}`')
+        content.add_field(name='Release date:', value=f'`{album["release_date"]}`')
+        content.add_field(name='Total tracks:', value=f'`{album["total_tracks"]}`')
+        content.add_field(name='Type:', value=f'`{album["album_type"]}`')
         return content
 
 def setup(bot):
