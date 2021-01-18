@@ -127,3 +127,35 @@ def stringfromtimestamp(s):
     if s > 0:
         comp.append(f'{s} second' + ('s' if s > 1 else ''))
     return ' '.join(comp)
+
+def get_pitch(p):
+    if p == 0:
+        tone = 'C'
+    elif p == 1:
+        tone = 'C♯'
+    elif p == 2:
+        tone = 'D'
+    elif p == 3:
+        tone = 'D♯'
+    elif p == 4:
+        tone = 'E'
+    elif p == 5:
+        tone = 'F'
+    elif p == 6:
+        tone = 'F♯'
+    elif p == 8:
+        tone = 'G'
+    elif p == 9:
+        tone = 'G♯'
+    elif p == 10:
+        tone = 'A'
+    elif p == 11:
+        tone = 'G♯'
+    return tone
+
+def get_mode(m):
+    if m == 0:
+        mode = 'Minor'
+    elif m == 1:
+        mode = 'Major'
+    return mode
