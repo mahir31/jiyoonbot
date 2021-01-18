@@ -286,35 +286,10 @@ class Spotify(commands.Cog):
         else:
             track = sp.internal_call('/v1/me/player/currently-playing', access_token)
             if not track:
-                await ctx.send("need to the bit in for when you're not listening to something")
+                track = sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
+                await self.create_features_chart(ctx, track['items'][0]['track'], access_token)
             else:
-                features = sp.internal_call(f'/v1/audio-features/{track["item"]["id"]}', access_token)
-                names = 'danceability', 'energy', 'speechiness', 'acousticness', 'liveness', 'valence'
-                size = [features['danceability'],
-                    features['energy'],
-                    features['speechiness'],
-                    features['acousticness'],
-                    features['liveness'],
-                    features['valence']]
-                center_circle=plt.Circle( (0,0), 0.7, color='white')
-                plt.pie(size, labels=names, colors=Pastel1_7.hex_colors)
-                p=plt.gcf()
-                plt.gca().add_artist(center_circle)
-                plt.title(f"Spotify catalog information for: {track['item']['name']} by {track['item']['artists'][0]['name']}")
-                plt.savefig('chart.jpeg')
-                file = discord.File('chart.jpeg', filename='chart.jpeg')
-                content = discord.Embed(colour=int(util.color_from_image('https://www.scdn.co/i/_global/touch-icon-72.png'), 16))
-                content.set_image(url='attachment://chart.jpeg')
-                content.set_author(name=f'📊{track["item"]["name"]} feature analysis',
-                    url=track['item']['external_urls']['spotify'],
-                    icon_url='https://www.scdn.co/i/_global/touch-icon-72.png')
-                content.add_field(name='Key:', value=f'`{util.get_pitch(features["key"])} {util.get_mode(features["mode"])}`')
-                content.add_field(name='Length:', value=f'`{util.stringfromtimestamp(features["duration_ms"]/1000.0)}`')
-                content.add_field(name='Tempo:', value=f'`{int(features["tempo"])} beats per minute`')
-                content.set_footer(text='🎵 Analysis provided by Spotify')
-                await ctx.send(file=file, embed=content)
-                os.remove('chart.jpeg')
-                plt.clf()
+                await self.create_features_chart(ctx, track['item'], access_token)
 
     # helper functions
 
@@ -412,6 +387,35 @@ class Spotify(commands.Cog):
         content.add_field(name='Total tracks:', value=f'`{album["total_tracks"]}`')
         content.add_field(name='Type:', value=f'`{album["album_type"]}`')
         return content
+
+    async def create_features_chart(self, ctx, track, access_token):
+        features = sp.internal_call(f'/v1/audio-features/{track["id"]}', access_token)
+        names = 'danceability', 'energy', 'speechiness', 'acousticness', 'liveness', 'valence'
+        size = [features['danceability'],
+            features['energy'],
+            features['speechiness'],
+            features['acousticness'],
+            features['liveness'],
+            features['valence']]
+        center_circle=plt.Circle( (0,0), 0.7, color='white')
+        plt.pie(size, labels=names, colors=Pastel1_7.hex_colors)
+        p=plt.gcf()
+        plt.gca().add_artist(center_circle)
+        plt.title(f"Spotify catalog information for: {track['name']} by {track['artists'][0]['name']}")
+        plt.savefig('chart.jpeg')
+        file = discord.File('chart.jpeg', filename='chart.jpeg')
+        content = discord.Embed(colour=int(util.color_from_image('https://www.scdn.co/i/_global/touch-icon-72.png'), 16))
+        content.set_image(url='attachment://chart.jpeg')
+        content.set_author(name=f'📊{track["name"]} feature analysis',
+            url=track['external_urls']['spotify'],
+            icon_url='https://www.scdn.co/i/_global/touch-icon-72.png')
+        content.add_field(name='Key:', value=f'`{util.get_pitch(features["key"])} {util.get_mode(features["mode"])}`')
+        content.add_field(name='Length:', value=f'`{util.stringfromtimestamp(features["duration_ms"]/1000.0)}`')
+        content.add_field(name='Tempo:', value=f'`{int(features["tempo"])} beats per minute`')
+        content.set_footer(text='🎵 Analysis provided by Spotify')
+        await ctx.send(file=file, embed=content)
+        os.remove('chart.jpeg')
+        plt.clf()
 
 def setup(bot):
     bot.add_cog(Spotify(bot))
