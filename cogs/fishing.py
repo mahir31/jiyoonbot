@@ -14,6 +14,44 @@ class fish(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    common_fish = ['Siamese Fighting Fish',
+        'Common Carp',
+        'Guppy',
+        'Goldfish',
+        'Bluefish'
+        'Northern Pike',
+        'Wels Catfish'
+        'Atlantic Salmon',
+        'Gilt-head Bream',
+        'Neon Tetra',
+        'Mahi-mahi']
+
+    uncommon_fish = ['Ocellaris clownfish',
+    'Snakehead Murrel',
+    'Asian Arowana',
+    'Megalodon',
+    'Rainbow Trout',
+    'Red Phantom Tetra',
+    'Flower Horn',
+    'Freshwater Angelfish',
+    'Silver Arowana',
+    'Clownfish']
+
+    rare_fish = ['Electric Eel',
+    'Killer Whale',
+    'Striped Dolphin',
+    'Short-Finned Pilot Whale',
+    'Amazon River Dolphin',
+    'Bottlenose Dolphin',
+    'Spinner Dolphin',
+    'Baiji',
+    'False Killer Whale',
+    'Dusky']
+
+    ur_fish = ['Blinky the three eyed fish',
+    'James Pond: Undercover Agent',
+    'Onamazu the giant catfish']
+
     @commands.Cog.listener()
     async def on_ready(self):
         logging.info("cog: fishing.py connected")
