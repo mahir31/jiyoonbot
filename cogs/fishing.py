@@ -14,7 +14,10 @@ class fish(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    common_fish = ['Siamese Fighting Fish',
+    fish_types = ["escaped", "common", "uncommon", "rare", "ultra_rare"]
+    weights = [20.5, 41.5, 31.5, 6, 0.5]
+
+    common = ['Siamese Fighting Fish',
         'Common Carp',
         'Guppy',
         'Goldfish',
@@ -26,7 +29,7 @@ class fish(commands.Cog):
         'Neon Tetra',
         'Mahi-mahi']
 
-    uncommon_fish = ['Ocellaris clownfish',
+    uncommon = ['Ocellaris clownfish',
     'Snakehead Murrel',
     'Asian Arowana',
     'Megalodon',
@@ -37,7 +40,7 @@ class fish(commands.Cog):
     'Silver Arowana',
     'Clownfish']
 
-    rare_fish = ['Electric Eel',
+    rare = ['Electric Eel',
     'Killer Whale',
     'Striped Dolphin',
     'Short-Finned Pilot Whale',
@@ -48,7 +51,7 @@ class fish(commands.Cog):
     'False Killer Whale',
     'Dusky']
 
-    ur_fish = ['Blinky the three eyed fish',
+    ultra_rare = ['Blinky the three eyed fish',
     'James Pond: Undercover Agent',
     'Onamazu the giant catfish']
 
@@ -124,7 +127,7 @@ class fish(commands.Cog):
     # helper functions
 
     async def go_fishing(self, ctx, fisher):
-        catch = random.randint(0, 1)
+        catch = random.randint(1, 2)
         if bool(catch) == True:
             content = discord.Embed(colour=int(colour, 16))
             content.description = 'Something is on the line, type `"catch"` to reel it in!'
@@ -134,15 +137,15 @@ class fish(commands.Cog):
                 response = response.content
                 response = response.lower()
                 if response == 'catch':
-                    catch = random.randint(0, 1)
-                    if bool(catch) == True:
-                        await self.award_fish(ctx, fisher, True, 8, '🌟 Congratulations, you caught **1 fish** and are awarded **8 xp!**')
-                    else:
-                        await self.award_fish(ctx, fisher, False, 4, '⭐ You tried your hardest to reel it in but the fish slipped away, you gain only **4 xp**, better luck next time.')
+                    catch = random.choices(self.fish_types, self.weights)[0]
+                    catch = "common"
+                    if catch == "common":
+                        catch = random.choice(self.common)
+                        await ctx.send(catch)
             except asyncio.TimeoutError:
-                await self.award_fish(ctx, fisher, False, 2, '🎇 Oops, the fish escaped before you could reel it in, you gain **2 xp**')
+                await ctx.send("timeout")
         else:
-            await self.award_fish(ctx, fisher, False, 1, '🎇 You cast your reel, but sadly no fish took the bait, you gain **1 xp** try again later')
+            await ctx.send("failed.")
 
     async def award_fish(self, ctx, fisher, success, exp, message):
         fisher_id, times_fished, total_fish, last_fished, exp_points, coins = fisher[0]
