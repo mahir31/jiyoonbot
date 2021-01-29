@@ -19,6 +19,5 @@ CREATE TABLE fish (
     last_fished REAL NOT NULL,
     exp_points INTEGER NOT NULL,
     coins INTEGER NOT NULL,
-    fishing_rod TEXT NOT NULL,
     PRIMARY KEY(fisher_id)
 );
