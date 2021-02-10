@@ -56,6 +56,7 @@ class TwitterStreamer(commands.Cog):
 		'''Commands for Twitter streamer:'''
 	
 	@tw.command()
+	@commands.is_owner()
 	async def addsite(self, ctx, channel: discord.TextChannel, username):
 		'''specify a channel and an account to add a site'''
 		twitter_id = api.get_user(username).id
@@ -72,6 +73,7 @@ class TwitterStreamer(commands.Cog):
 			await ctx.send (f"{username} has been added to {channel.mention}")
 	
 	@tw.command()
+	@commands.is_owner()
 	async def sitecheck(self, ctx, channel: discord.TextChannel):
 		'''specify a channel to check which sites are aligned to it'''
 		twitter_id = db.check_site(channel.id)[0]
@@ -80,6 +82,7 @@ class TwitterStreamer(commands.Cog):
 			await ctx.send(username)
 	
 	@tw.command()
+	@commands.is_owner()
 	async def removesite(self, ctx, channel: discord.TextChannel, username):
 		'''specify a channel and a username to remove the site from the channel'''
 		user = api.get_user(username).id
