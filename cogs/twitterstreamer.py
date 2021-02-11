@@ -52,6 +52,7 @@ class TwitterStreamer(commands.Cog):
 	# bot commands
 
 	@commands.group(case_insensitive=True)
+	@commands.is_owner()
 	async def tw(self, ctx):
 		'''Commands for Twitter streamer:'''
 	
