@@ -1,4 +1,5 @@
 import json
+from aiohttp.client_exceptions import ClientResponseError
 import requests
 import os
 import asyncio
@@ -17,6 +18,7 @@ async def internal_call(endpoint, source_lang, word_id):
         "app_id":OXFORD_DICTIONARY_APPLICATION_ID,
         "app_key":OXFORD_DICTIONARY_APPLICATION_KEY
     }
+
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers) as response:
             data = await response.json()

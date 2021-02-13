@@ -11,7 +11,7 @@ class Dictionary(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        logging.info("cog: dictionary.py connected")
+        logging.info('cog: dictionary.py connected')
 
     # commands
     @commands.group(case_insensitive=True)
@@ -20,8 +20,11 @@ class Dictionary(commands.Cog):
 
     @dc.command(aliases=["df"])
     async def define(self, ctx, args):
-        result = await ox.internal_call("entries", "en-gb", args)
-        await ctx.send(str(result))
+        result = await ox.internal_call('entries', 'en-gb', args)
+        if 'error' in result:
+            await ctx.send('it work big pog')
+        else:
+            await ctx.send(str(result))
 
 def setup(bot):
     bot.add_cog(Dictionary(bot))
