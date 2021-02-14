@@ -24,7 +24,13 @@ class Dictionary(commands.Cog):
         if 'error' in result:
             await ctx.send('it work big pog')
         else:
-            await ctx.send(str(result))
+            result = result['results'][0]['lexicalEntries'][0]
+            definitions = '\n'.join([definitions['definitions'][0] for definitions in result['entries'][0]['senses']])
+            synonyms = ', '.join(synonyms['text'] for synonyms in result['entries'][0]['senses'][0]['synonyms'])
+            audiofile = result['entries'][0]['pronunciations'][0]['audioFile']
+            await ctx.send(definitions)
+            await ctx.send(synonyms)
+            await ctx.send(audiofile)
 
 def setup(bot):
     bot.add_cog(Dictionary(bot))
