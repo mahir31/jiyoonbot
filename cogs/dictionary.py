@@ -38,6 +38,8 @@ class Dictionary(commands.Cog):
             logging.info('no synonyms were found')
         audiofile = entry['entries'][0]['pronunciations'][0]['audioFile']
         await ctx.send(audiofile)
+        examples = entry['entries'][0]['senses'][0]['examples']
+        await ctx.send(str(examples))
 
 def setup(bot):
     bot.add_cog(Dictionary(bot))
