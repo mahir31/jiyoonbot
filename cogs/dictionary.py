@@ -1,4 +1,6 @@
 import discord
+from discord import colour
+from discord.embeds import Embed
 from discord.ext import commands
 import logging
 from tools import ox_requests as ox
@@ -24,22 +26,47 @@ class Dictionary(commands.Cog):
         if 'error' in result:
             await ctx.send('it work big pog')
         else:
-            await self.extraction_and_send(ctx, result['results'][0]['lexicalEntries'][0])
+            await self.extraction_and_send(ctx, result)
 
     # helper functions
 
-    async def extraction_and_send(self, ctx, entry):
-        definitions = '\n'.join([definitions['definitions'][0] for definitions in entry['entries'][0]['senses']])
-        await ctx.send(definitions)
-        try:
-            synonyms = ', '.join(synonyms['text'] for synonyms in entry['entries'][0]['senses'][0]['synonyms'])
-            await ctx.send(synonyms)
-        except KeyError:
-            logging.info('no synonyms were found')
-        audiofile = entry['entries'][0]['pronunciations'][0]['audioFile']
-        await ctx.send(audiofile)
-        examples = entry['entries'][0]['senses'][0]['examples']
-        await ctx.send(str(examples))
+    async def extraction_and_send(self, ctx, data):
+        total_entries = []
+        content = discord.Embed(colour = discord.Colour.from_rgb(0, 189, 242))
+        content.description = ''
+
+        for entry in data['results'][0]['lexicalEntries']:
+            definitions_value = ''
+            name = data['results'][0]['word']
+        
+        for i in range(len(entry['entries'][0]['senses'])):
+            for definition in entry['entries'][0]['senses'][i].get('definitions', []):
+                top_definition = f'\n**{i + 1}.** {definition}'
+                if len(definitions_value + top_definition) > 1024:
+                    break
+                definitions_value += top_definition
+                try:
+                    for y in range(len(entry['entries'][0]['senses'][i]['examples'])):
+                        for example in entry['entries'][0]['senses'][i]['examples']:
+                            example = f'\n> {example["text"]}'
+                            if len(definitions_value + example) > 1024:
+                               break
+                            definitions_value += example
+                    definitions_value += '\n'
+                except KeyError:
+                    pass
+        word_type = entry['lexicalCategory']['text']
+        current_entry = {
+            'id': name,
+            'definitions': definitions_value,
+            'type': word_type, 
+        }
+        total_entries.append(current_entry)
+        content.set_author(name=total_entries[0]['id'], icon_url='https://i.imgur.com/vDvSmF3.png')
+
+        for entry in total_entries:
+            content.add_field(name=f'{entry["type"]}', value=entry['definitions'], inline=False)
+        await ctx.send(embed=content)
 
 def setup(bot):
     bot.add_cog(Dictionary(bot))
