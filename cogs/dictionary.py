@@ -4,7 +4,6 @@ from discord.embeds import Embed
 from discord.ext import commands
 import logging
 from tools import ox_requests as ox
-import json
 
 class Dictionary(commands.Cog):
 
@@ -60,10 +59,8 @@ class Dictionary(commands.Cog):
                 synonyms = None            
             try:
                 audiofile = entry['entries'][0]['pronunciations'][0]['audioFile']
-            
             except KeyError:
                 pass
-            
             for reference in entry['entries'][0]['senses'][i].get('crossReferenceMarkers', []):
                 definitions_value += reference
             
@@ -74,13 +71,10 @@ class Dictionary(commands.Cog):
                 'type': word_type, 
             }
             total_entries.append(current_entry)
-        
         for entry in total_entries:
             content.add_field(name=f'{entry["type"]}', value=f"{entry['definitions']}", inline=False)
-        
         if synonyms:
             content.add_field(name="Similar:", value=f"{synonyms}", inline=False)
-
         content.set_author(name=f"📚{total_entries[0]['id']}", url=audiofile)
         content.set_footer(text="Definitions provided by Oxford Dictionary", icon_url="https://i.imgur.com/vDvSmF3.png")
 
