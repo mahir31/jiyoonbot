@@ -33,6 +33,12 @@ class misc(commands.Cog):
         content.set_author(name=str(user), url=user.avatar_url)
         content.set_image(url=user.avatar_url)
         await ctx.send(embed=content)
+    
+    @commands.command(aliases=["pg"])
+    async def purge(self, ctx, limit):
+        """Deletes messages in a channel, both channel and amount can be specified by the user"""
+        channel = ctx.message.channel
+        await channel.purge(limit=int(limit) + 1)
 
 def setup(bot):
     bot.add_cog(misc(bot))
