@@ -1,3 +1,5 @@
+from os import name
+from ssl import ALERT_DESCRIPTION_ACCESS_DENIED
 import discord
 from discord import colour
 from discord.embeds import Embed
@@ -21,15 +23,11 @@ class Dictionary(commands.Cog):
 
     @dc.command(aliases=["df"])
     async def define(self, ctx, args):
-        result = await ox.internal_call('entries', 'en-gb', args)
-        if 'error' in result:
-            await ctx.send('it work big pog')
-        else:
-            await self.extraction_and_send(ctx, result)
-
-    # helper functions
-
-    async def extraction_and_send(self, ctx, data):
+        data = await ox.internal_call('entries', 'en-gb', args)
+        if 'error' in data:
+            data = await ox.internal_call('lemmas', 'en-gb', args)
+            data = await ox.internal_call('entries', 'en-gb', data['results'][0]['lexicalEntries'][0]['inflectionOf'][0]['id'])
+        
         total_entries = []
         content = discord.Embed(colour = discord.Colour.from_rgb(128, 0, 0))
         content.description = ''
@@ -76,8 +74,23 @@ class Dictionary(commands.Cog):
         if synonyms:
             content.add_field(name="Similar:", value=f"{synonyms}", inline=False)
         content.set_author(name=f"📚{total_entries[0]['id']}", url=audiofile)
-        content.set_footer(text="Definitions provided by Oxford Dictionary", icon_url="https://i.imgur.com/vDvSmF3.png")
+        content.set_footer(text="Definitions provided by Oxford University Press", icon_url="https://i.imgur.com/vDvSmF3.png")
 
+        await ctx.send(embed=content)
+
+    @dc.command(aliases=["ch"])
+    async def check(self, ctx, args):
+        data = await ox.internal_call('lemmas', 'en-gb', args)
+        content = discord.Embed(colour = discord.Colour.from_rgb(128, 0, 0))
+        content.set_author(name=f"📚{data['results'][0]['word']}")
+        for index in range(len(data['results'][0]['lexicalEntries'])):
+            for key, value in data['results'][0]['lexicalEntries'][index].items():
+                if key == 'grammaticalFeatures':
+                    grammartext = value[0]['text']
+                    grammartype = value[0]['type']
+        
+        content.add_field(name="Grammar Property:", value=f"`{grammartext} - {grammartype}`", inline=False)
+        content.set_footer(text="Lemmas provided by Oxford University Press", icon_url="https://i.imgur.com/vDvSmF3.png")
         await ctx.send(embed=content)
 
 def setup(bot):
