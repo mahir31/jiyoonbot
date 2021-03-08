@@ -83,7 +83,6 @@ class Dictionary(commands.Cog):
         data = await ox.internal_call('lemmas', 'en-gb', args)
         content = discord.Embed(colour = discord.Colour.from_rgb(128, 0, 0))
         content.set_author(name=f"📚{data['results'][0]['word']}")
-        inflections = []
         for index in range(len(data['results'][0]['lexicalEntries'])):
             for key, value in data['results'][0]['lexicalEntries'][index].items():
                 try:
@@ -92,16 +91,8 @@ class Dictionary(commands.Cog):
                         grammartype = value[0]['type']
                 except ValueError:
                     pass
-            for key, value in data['results'][0]['lexicalEntries'][index].items():
-                try:
-                    if key == 'inflectionOf':
-                        inflections += value[0]['text']
-                except ValueError:
-                    inflections = None
         if 'grammartype' and 'grammartype' in locals():
             content.add_field(name="Grammar Property:", value=f"`{grammartext} - {grammartype}`", inline=False)
-        if inflections:
-            content.add_field(name=f'Inflection:', value=f'`{inflections}`', inline=False)
         content.set_footer(text="Lemmas provided by Oxford University Press", icon_url="https://i.imgur.com/vDvSmF3.png")
         await ctx.send(embed=content)
         # await ctx.send(data['results'][0]['lexicalEntries'][0]['lexicalCategory'])
