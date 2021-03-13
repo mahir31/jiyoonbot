@@ -22,35 +22,22 @@ class Dictionary(commands.Cog):
         data = await ox.internal_call('entries', 'en-gb', args)
         if 'error' in data:
             data = await ox.internal_call('lemmas', 'en-gb', args)
-            data = await ox.internal_call('entries', 'en-gb', data['results'][0]['lexicalEntries'][0]['inflectionOf'][0]['id'])
+            if 'error' in data:
+                await ctx.send(f'⚠️no definition could be found for {args}')
+            else:
+                data = await ox.internal_call('entries', 'en-gb', data['results'][0]['lexicalEntries'][0]['inflectionOf'][0]['id'])
+                await self.send_definition(ctx, data)
         else:
             await self.send_definition(ctx, data)
 
     @dc.command(aliases=["ch"])
     async def check(self, ctx, args):
         data = await ox.internal_call('lemmas', 'en-gb', args)
-        content = discord.Embed(colour = discord.Colour.from_rgb(128, 0, 0))
-        try:
-            content.set_author(name=f"📚{data['results'][0]['word']}")
-        except KeyError:
-            content.set_author(name=f'⚠️{args}')
-        try:
-            for index in range(len(data['results'][0]['lexicalEntries'])):
-                for key, value in data['results'][0]['lexicalEntries'][index].items():
-                    try:
-                        if key == 'grammaticalFeatures':
-                            grammartext = value[0]['text']
-                            grammartype = value[0]['type']
-                    except ValueError:
-                        pass
-        except KeyError:
-            pass
-        if 'grammartype' and 'grammartype' in locals():
-            content.add_field(name="Grammar Property:", value=f"`{grammartext} - {grammartype}`", inline=False)
+        if 'error' in data:
+            await ctx.send(f'⚠️nothing was found for {args}')
         else:
-            content.description = f'Unfortunately {args} could not be found in the dictionary'
-        content.set_footer(text="Lemmas provided by Oxford University Press", icon_url="https://i.imgur.com/vDvSmF3.png")
-        await ctx.send(embed=content)
+            await self.send_lemmas(ctx, data)
+
     
     # helper functions
     
@@ -101,6 +88,25 @@ class Dictionary(commands.Cog):
         content.set_author(name=f"📚{total_entries[0]['id']}", url=audiofile)
         content.set_footer(text="Definitions provided by Oxford University Press", icon_url="https://i.imgur.com/vDvSmF3.png")
 
+        await ctx.send(embed=content)
+    
+    async def send_lemmas(self, ctx, data):
+        content = discord.Embed(colour = discord.Colour.from_rgb(128, 0, 0))
+        content.set_author(name=f"📚{data['results'][0]['word']}")
+        try:
+            for index in range(len(data['results'][0]['lexicalEntries'])):
+                for key, value in data['results'][0]['lexicalEntries'][index].items():
+                    try:
+                        if key == 'grammaticalFeatures':
+                            grammartext = value[0]['text']
+                            grammartype = value[0]['type']
+                    except ValueError:
+                        pass
+        except KeyError:
+            pass
+        if 'grammartype' and 'grammartype' in locals():
+            content.add_field(name="Grammar Property:", value=f"`{grammartext} - {grammartype}`", inline=False)
+        content.set_footer(text="Lemmas provided by Oxford University Press", icon_url="https://i.imgur.com/vDvSmF3.png")
         await ctx.send(embed=content)
 
 def setup(bot):
