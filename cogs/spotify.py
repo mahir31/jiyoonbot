@@ -11,7 +11,6 @@ import requests
 import os
 import matplotlib.pyplot as plt
 from palettable.colorbrewer.qualitative import Pastel1_7
-import datetime
 
 class Spotify(commands.Cog):
     
