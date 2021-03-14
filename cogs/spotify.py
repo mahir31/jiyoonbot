@@ -10,7 +10,8 @@ from io import BytesIO
 import requests
 import os
 import matplotlib.pyplot as plt
-from palettable.colorbrewer.qualitative import Pastel1_7
+from palettable.cartocolors.qualitative import Pastel_7
+from textwrap import wrap
 
 class Spotify(commands.Cog):
     
@@ -396,13 +397,13 @@ class Spotify(commands.Cog):
             features['acousticness'],
             features['liveness'],
             features['valence']]
-        center_circle=plt.Circle( (0,0), 0.7, color='white')
-        plt.pie(size, labels=names, colors=Pastel1_7.hex_colors)
+        plt.pie(size, labels=names, colors=Pastel_7.hex_colors, labeldistance=1.15, wedgeprops= { 'linewidth' : 3, 'edgecolor' : 'white' })
         p=plt.gcf()
-        plt.gca().add_artist(center_circle)
-        plt.title(f"Spotify catalog information for: {track['name']} by {track['artists'][0]['name']}")
+        plt.rcParams['axes.titlesize'] = 10
+        plt.title("\n".join(wrap(f"Spotify catalog information for: {track['name']} by {track['artists'][0]['name']}")))
         plt.savefig('chart.jpeg')
         file = discord.File('chart.jpeg', filename='chart.jpeg')
+        
         content = discord.Embed(colour=int(util.color_from_image('https://www.scdn.co/i/_global/touch-icon-72.png'), 16))
         content.set_image(url='attachment://chart.jpeg')
         content.set_author(name=f'📊{track["name"]} feature analysis',
@@ -412,6 +413,7 @@ class Spotify(commands.Cog):
         content.add_field(name='Length:', value=f'`{util.stringfromtimestamp(features["duration_ms"]/1000.0)}`')
         content.add_field(name='Tempo:', value=f'`{int(features["tempo"])} beats per minute`')
         content.set_footer(text='🎵 Analysis provided by Spotify')
+        
         await ctx.send(file=file, embed=content)
         os.remove('chart.jpeg')
         plt.clf()
