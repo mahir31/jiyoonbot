@@ -1,10 +1,7 @@
 import json
-import requests
 import os
 import asyncio
 import aiohttp
-
-from requests.models import HTTPError
 
 OXFORD_DICTIONARY_APPLICATION_ID = os.environ["OXFORD_DICTIONARY_APPLICATION_ID"]
 OXFORD_DICTIONARY_APPLICATION_KEY = os.environ["OXFORD_DICTIONARY_APPLICATION_KEY"]

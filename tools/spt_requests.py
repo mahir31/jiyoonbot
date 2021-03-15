@@ -68,16 +68,20 @@ def get_discord_id(code):
     user_id = user_id['id']
     return user_id
 
-def get_access_token(refresh_token):
+async def get_access_token(refresh_token):
     payload = {
         'grant_type': 'refresh_token',
         'refresh_token': refresh_token
     }
     headers = {'authorization': f'Basic {encode_authorization_string()}'}
-    response = requests.post(SPOTIFY_TOKEN_URL, data=payload, headers=headers)
-    response = response.json()
-    access_token = response['access_token']
-    return access_token
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(SPOTIFY_TOKEN_URL, data=payload, headers=headers) as response:
+                data = await response.json()
+                return data['access_token']
+    except requests.exceptions.HTTPError as http_error:
+        result = 'error: ' + str(http_error)
+        return result
 
 async def internal_call(url, access_token):
     headers = {'authorization': f'Bearer {access_token}'}

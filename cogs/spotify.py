@@ -44,7 +44,7 @@ class Spotify(commands.Cog):
         '''Disconnect Spotify account'''
         icon = 'https://www.scdn.co/i/_global/touch-icon-72.png'
         icon_colour = util.color_from_image(icon)
-        access_token = self.rtv_access_token(ctx.author.id)
+        access_token = await self.rtv_access_token(ctx.author.id)
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
@@ -82,7 +82,7 @@ class Spotify(commands.Cog):
     @sp.command(aliases=['np'])
     async def nowplaying(self, ctx):
         '''Show currently playing track'''
-        access_token = self.rtv_access_token(ctx.author.id)
+        access_token = await self.rtv_access_token(ctx.author.id)
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
@@ -97,7 +97,7 @@ class Spotify(commands.Cog):
     @sp.command(aliases=['re'])
     async def recent(self, ctx):
         '''Recently played tracks'''
-        access_token = self.rtv_access_token(ctx.author.id)
+        access_token = await self.rtv_access_token(ctx.author.id)
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
@@ -125,7 +125,7 @@ class Spotify(commands.Cog):
     async def topartists(self, ctx, time_range='st'):
         '''Top artists'''
         time_range = util.get_time_range(time_range)
-        access_token = self.rtv_access_token(ctx.author.id)
+        access_token = await self.rtv_access_token(ctx.author.id)
         if not access_token:
             await ctx.send(embed=self.create_connect_embed(ctx.author.avatar_url))
         else:
@@ -149,7 +149,7 @@ class Spotify(commands.Cog):
     async def toptracks(self, ctx, time_range='st'):
         '''Top tracks'''
         time_range = util.get_time_range(time_range)
-        access_token = self.rtv_access_token(ctx.author.id)
+        access_token = await self.rtv_access_token(ctx.author.id)
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
@@ -177,7 +177,7 @@ class Spotify(commands.Cog):
     @sp.command(aliases=['sa'])
     async def searchartist(self, ctx, *query):
         '''search for an artist on spotify'''
-        access_token = self.rtv_access_token(ctx.author.id)
+        access_token = await self.rtv_access_token(ctx.author.id)
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
@@ -210,7 +210,7 @@ class Spotify(commands.Cog):
     @sp.command(aliases=['salb'])
     async def searchalbum(self, ctx, *query):
         '''search for an album on spotify'''
-        access_token = self.rtv_access_token(ctx.author.id)
+        access_token = await self.rtv_access_token(ctx.author.id)
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
@@ -235,7 +235,7 @@ class Spotify(commands.Cog):
     @sp.command(aliases=['rc'])
     async def recommendations(self, ctx):
         '''recommendations generated from Spotify based on users top tracks, top artists and top genres'''
-        access_token = self.rtv_access_token(ctx.author.id)
+        access_token = await self.rtv_access_token(ctx.author.id)
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
@@ -280,7 +280,7 @@ class Spotify(commands.Cog):
     @sp.command(aliases=['ft'])
     async def features(self, ctx):
         '''display audio features for currently playing or most recently played track'''
-        access_token = self.rtv_access_token(ctx.author.id)
+        access_token = await self.rtv_access_token(ctx.author.id)
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
@@ -293,10 +293,10 @@ class Spotify(commands.Cog):
 
     # helper functions
 
-    def rtv_access_token(self, discord_id):
+    async def rtv_access_token(self, discord_id):
         refresh_token = db.rtv_refresh_token(discord_id)
         if refresh_token:
-            access_token = sp.get_access_token(refresh_token[0][0])
+            access_token = await sp.get_access_token(refresh_token[0][0])
             return access_token
         else:
             return None
