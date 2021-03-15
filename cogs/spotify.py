@@ -86,11 +86,11 @@ class Spotify(commands.Cog):
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
-            result = sp.internal_call('/v1/me/player/currently-playing', access_token)
+            result = await sp.internal_call('/v1/me/player/currently-playing', access_token)
             if result:
                 content = self.create_np_embed(result['item'], ctx.author)
             else:
-                result = sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
+                result = await sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
                 content = self.create_recently_played_embed(result['items'][0]['track'], ctx.author)
             await ctx.send(embed=content)
     
@@ -101,7 +101,7 @@ class Spotify(commands.Cog):
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
-            result = sp.internal_call(f'/v1/me/player/recently-played?limit=50', access_token)
+            result = await sp.internal_call(f'/v1/me/player/recently-played?limit=50', access_token)
             if result:
                 track_names = [t['track']['name'] for t in result['items']]
                 artist_names = [a['track']['artists'][0]['name'] for a in result['items']]
@@ -129,7 +129,7 @@ class Spotify(commands.Cog):
         if not access_token:
             await ctx.send(embed=self.create_connect_embed(ctx.author.avatar_url))
         else:
-            result = sp.internal_call(f'/v1/me/top/artists?time_range={time_range}&limit=50', access_token)
+            result = await sp.internal_call(f'/v1/me/top/artists?time_range={time_range}&limit=50', access_token)
             if result:
                 artist_names = [ta['name'] for ta in result['items']]
                 artist_image = result['items'][0]['images'][0]['url']
@@ -153,7 +153,7 @@ class Spotify(commands.Cog):
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
-            result = sp.internal_call(f'/v1/me/top/tracks?time_range={time_range}&limit=50', access_token)
+            result = await sp.internal_call(f'/v1/me/top/tracks?time_range={time_range}&limit=50', access_token)
             if result:
                 track_names = [t['name'] for t in result['items']]
                 artist_names = [a['artists'][0]['name'] for a in result['items']]
@@ -183,21 +183,21 @@ class Spotify(commands.Cog):
         else:
             try:
                 if query[0] == 'np':
-                    result = sp.internal_call('/v1/me/player/currently-playing', access_token)
+                    result = await sp.internal_call('/v1/me/player/currently-playing', access_token)
                     if result:
-                        artist = sp.internal_call(f'/v1/artists/{result["item"]["artists"][0]["id"]}', access_token)
-                        top_tracks = sp.internal_call(f'/v1/artists/{result["item"]["artists"][0]["id"]}/top-tracks?country=from_token', access_token)
+                        artist = await sp.internal_call(f'/v1/artists/{result["item"]["artists"][0]["id"]}', access_token)
+                        top_tracks = await sp.internal_call(f'/v1/artists/{result["item"]["artists"][0]["id"]}/top-tracks?country=from_token', access_token)
                         top_tracks = self.linked_tracks(top_tracks)
                         await ctx.send(embed=self.create_artist_embed(artist, top_tracks))
                     else:
-                        result = sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
-                        artist = sp.internal_call(f'/v1/artists/{result["items"][0]["track"]["artists"][0]["id"]}', access_token)
-                        top_tracks = sp.internal_call(f'/v1/artists/{result["items"][0]["track"]["artists"][0]["id"]}/top-tracks?country=from_token', access_token)
+                        result = await sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
+                        artist = await sp.internal_call(f'/v1/artists/{result["items"][0]["track"]["artists"][0]["id"]}', access_token)
+                        top_tracks = await sp.internal_call(f'/v1/artists/{result["items"][0]["track"]["artists"][0]["id"]}/top-tracks?country=from_token', access_token)
                         top_tracks = self.linked_tracks(top_tracks)
                         await ctx.send(embed=self.create_artist_embed(artist, top_tracks))
                 else:
-                    artist = self.spotify_search(query, query_type='artist', access_token=access_token)
-                    top_tracks = sp.internal_call(f'/v1/artists/{artist["artists"]["items"][0]["id"]}/top-tracks?country=from_token', access_token)
+                    artist = await self.spotify_search(query, query_type='artist', access_token=access_token)
+                    top_tracks = await sp.internal_call(f'/v1/artists/{artist["artists"]["items"][0]["id"]}/top-tracks?country=from_token', access_token)
                     top_tracks = self.linked_tracks(top_tracks)
                     await ctx.send(embed=self.create_artist_embed(artist['artists']['items'][0], top_tracks))
             except IndexError:
@@ -216,14 +216,14 @@ class Spotify(commands.Cog):
         else:
             try:
                 if query[0] == 'np':
-                    result = sp.internal_call('/v1/me/player/currently-playing', access_token)
+                    result = await sp.internal_call('/v1/me/player/currently-playing', access_token)
                     if result:
                         await ctx.send(embed=self.create_album_embed(result['item']['album']))
                     else:
-                        result = sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
+                        result = await sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
                         await ctx.send(embed=self.create_album_embed(result['items'][0]['track']['album']))
                 else:
-                    result = self.spotify_search(query, query_type='album', access_token=access_token)
+                    result = await self.spotify_search(query, query_type='album', access_token=access_token)
                     await ctx.send(embed=self.create_album_embed(result['albums']['items'][0]))
             except IndexError:
                 content = discord.Embed(colour=int(util.color_from_image('https://www.scdn.co/i/_global/touch-icon-72.png'), 16))
@@ -241,17 +241,17 @@ class Spotify(commands.Cog):
         else:
             seed_tracks = []
             seed_artists = []
-            result = sp.internal_call('/v1/me/top/tracks?limit=1&time_range=medium_term', access_token)
+            result = await sp.internal_call('/v1/me/top/tracks?limit=1&time_range=medium_term', access_token)
             seed_tracks.append(result['items'][0]['id'])
-            result = sp.internal_call('/v1/me/top/tracks?limit=1&time_range=short_term', access_token)
+            result = await sp.internal_call('/v1/me/top/tracks?limit=1&time_range=short_term', access_token)
             seed_tracks.append(result['items'][0]['id'])
-            result = sp.internal_call('/v1/me/top/artists?limit=1&time_range=medium_term', access_token)
+            result = await sp.internal_call('/v1/me/top/artists?limit=1&time_range=medium_term', access_token)
             seed_artists.append(result['items'][0]['id'])
-            result = sp.internal_call('/v1/me/top/artists?limit=1&time_range=short_term', access_token)
+            result = await sp.internal_call('/v1/me/top/artists?limit=1&time_range=short_term', access_token)
             seed_artists.append(result['items'][0]['id'])
             seed_tracks = ','.join(seed_tracks)
             seed_artists = ','.join(seed_artists)
-            result = sp.internal_call(f"/v1/recommendations?seed_tracks={seed_tracks}&seed_artists={seed_artists}&limit=9", access_token)
+            result = await sp.internal_call(f"/v1/recommendations?seed_tracks={seed_tracks}&seed_artists={seed_artists}&limit=9", access_token)
             linked_tracks = self.linked_tracks(result)
             linked_tracks = ', '.join(linked_tracks)
             album_artwork = [x['album']['images'][0]['url'] for x in result['tracks']]
@@ -284,9 +284,9 @@ class Spotify(commands.Cog):
         if not access_token:
             await ctx.send(embed=self.create_connect_embed())
         else:
-            track = sp.internal_call('/v1/me/player/currently-playing', access_token)
+            track = await sp.internal_call('/v1/me/player/currently-playing', access_token)
             if not track:
-                track = sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
+                track = await sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
                 await self.create_features_chart(ctx, track['items'][0]['track'], access_token)
             else:
                 await self.create_features_chart(ctx, track['item'], access_token)
@@ -310,9 +310,9 @@ class Spotify(commands.Cog):
             content.append(x)
         return content
     
-    def spotify_search(self, query, query_type, access_token):
+    async def spotify_search(self, query, query_type, access_token):
         query = '%20'.join(query)
-        result = sp.internal_call(f'/v1/search?q={query}&type={query_type}&limit=1', access_token)
+        result = await sp.internal_call(f'/v1/search?q={query}&type={query_type}&limit=1', access_token)
         return result
 
     # create embeds
@@ -389,7 +389,7 @@ class Spotify(commands.Cog):
         return content
 
     async def create_features_chart(self, ctx, track, access_token):
-        features = sp.internal_call(f'/v1/audio-features/{track["id"]}', access_token)
+        features = await sp.internal_call(f'/v1/audio-features/{track["id"]}', access_token)
         names = 'danceability', 'energy', 'speechiness', 'acousticness', 'liveness', 'valence'
         size = [features['danceability'],
             features['energy'],

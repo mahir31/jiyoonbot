@@ -3,6 +3,7 @@ import os
 import urllib
 from base64 import b64encode
 import requests
+import aiohttp
 
 SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
 SPOTIFY_CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
@@ -78,14 +79,13 @@ def get_access_token(refresh_token):
     access_token = response['access_token']
     return access_token
 
-def internal_call(url, access_token):
+async def internal_call(url, access_token):
     headers = {'authorization': f'Bearer {access_token}'}
     try:
-        response = requests.get(f'{SPOTIFY_API_ENDPOINT}{url}', headers=headers)
-        if response.status_code == 200:
-            result = response.json()
-        else:
-            result = None
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f'{SPOTIFY_API_ENDPOINT}{url}', headers=headers) as response:
+                data = await response.json()
+                return data
     except requests.exceptions.HTTPError as http_error:
         result = 'error: ' + str(http_error)
-    return result
+        return result

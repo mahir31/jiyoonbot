@@ -1,9 +1,7 @@
 import json
-from aiohttp.client_exceptions import ClientResponseError
 import requests
 import os
 import asyncio
-from requests import exceptions
 import aiohttp
 
 from requests.models import HTTPError
