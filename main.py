@@ -26,7 +26,7 @@ bot = commands.Bot(
 @bot.event
 async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='jiyoonbot.xyz'))
-    logging.info(f"{bot.user.name} - {bot.user.id}\nVersion: {discord.__version__}")
+    logging.info(f'watching {bot.guilds}')
 
 @bot.before_invoke
 async def before_any_command(ctx):
@@ -39,7 +39,7 @@ for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         bot.load_extension(f'cogs.{filename[:-3]}')
 
-@bot.command()
+@commands.command(hidden=True)
 @commands.is_owner()
 async def reload(ctx, extension):
     bot.reload_extension(f'cogs.{extension}')
