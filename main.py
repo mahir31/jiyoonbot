@@ -23,11 +23,6 @@ bot = commands.Bot(
     intents=discord.Intents().all(), 
     case_insensitive=True)
 
-@bot.event
-async def on_ready():
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='jiyoonbot.xyz'))
-    logging.info(f'watching {bot.guilds}')
-
 @bot.before_invoke
 async def before_any_command(ctx):
     try:
