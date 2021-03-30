@@ -11,8 +11,6 @@ class Dictionary(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         logging.info('cog: dictionary.py connected')
-
-    # commands
     
     @commands.command()
     async def define(self, ctx, args):
@@ -26,8 +24,6 @@ class Dictionary(commands.Cog):
                 await self.send_definition(ctx, data)
         else:
             await self.send_definition(ctx, data)
-    
-    # helper functions
 
     async def send_definition(self, ctx, data):
         total_entries = []

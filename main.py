@@ -28,8 +28,8 @@ bot = commands.Bot(
 async def before_any_command(ctx):
     try:
         await ctx.trigger_typing()
-    except discord.errors.Forbidden:
-        pass
+    except discord.errors.Forbidden as e:
+        await ctx.send(f'{e.__class__.__name__}: {e}')
 
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
