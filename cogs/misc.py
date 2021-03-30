@@ -16,14 +16,7 @@ class misc(commands.Cog):
     
     # commands
 
-    @commands.command()
-    async def about(self, ctx):
-        '''Bot information'''
-        content = discord.Embed(title='About:', colour=colour)
-        content.description = '''Name: Jiyoon Bot\nVersion: 1.02\nDeveloper: doublesocks#3034'''
-        await ctx.send(embed=content)
-
-    @commands.command(aliases=["dp", "pfp"])
+    @commands.command(aliases=["dp", "pfp", "av"])
     async def displaypicture(self, ctx, user: discord.User = None):
         """display user's profile picture"""
         if user is None:
@@ -33,10 +26,10 @@ class misc(commands.Cog):
         content.set_author(name=str(user), url=user.avatar_url)
         content.set_image(url=user.avatar_url)
         await ctx.send(embed=content)
-    
-    @commands.command(aliases=["pg"])
-    async def purge(self, ctx, limit):
-        """Deletes messages in a channel, both channel and amount can be specified by the user"""
+
+    @commands.command()
+    async def delete(self, ctx, limit):
+        """Deletes messages in a channel, number of messages subject to user input"""
         channel = ctx.message.channel
         await channel.purge(limit=int(limit) + 1)
 

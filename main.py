@@ -21,7 +21,8 @@ bot = commands.Bot(
     help_command=help.helpembeds(),
     command_prefix='>' if DEV else '$', 
     intents=discord.Intents().all(), 
-    case_insensitive=True)
+    case_insensitive=True
+    )
 
 @bot.before_invoke
 async def before_any_command(ctx):
@@ -33,11 +34,5 @@ async def before_any_command(ctx):
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         bot.load_extension(f'cogs.{filename[:-3]}')
-
-@commands.command(hidden=True)
-@commands.is_owner()
-async def reload(ctx, extension):
-    bot.reload_extension(f'cogs.{extension}')
-    await ctx.send(f"cogs.{extension} has been reloaded")
 
 bot.run(TOKEN)

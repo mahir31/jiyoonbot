@@ -13,11 +13,8 @@ class Dictionary(commands.Cog):
         logging.info('cog: dictionary.py connected')
 
     # commands
-    @commands.group(case_insensitive=True)
-    async def dc(self, ctx):
-        '''Dictionary commands'''
-
-    @dc.command(aliases=["df"])
+    
+    @commands.command()
     async def define(self, ctx, args):
         data = await ox.internal_call('entries', 'en-gb', args)
         if 'error' in data:
@@ -29,18 +26,9 @@ class Dictionary(commands.Cog):
                 await self.send_definition(ctx, data)
         else:
             await self.send_definition(ctx, data)
-
-    @dc.command(aliases=["ch"])
-    async def check(self, ctx, args):
-        data = await ox.internal_call('lemmas', 'en-gb', args)
-        if 'error' in data:
-            await ctx.send(f'⚠️nothing was found for {args}')
-        else:
-            await self.send_lemmas(ctx, data)
-
     
     # helper functions
-    
+
     async def send_definition(self, ctx, data):
         total_entries = []
         content = discord.Embed(colour = discord.Colour.from_rgb(128, 0, 0))
@@ -88,25 +76,6 @@ class Dictionary(commands.Cog):
         content.set_author(name=f"📚{total_entries[0]['id']}", url=audiofile)
         content.set_footer(text="Definitions provided by Oxford University Press", icon_url="https://i.imgur.com/vDvSmF3.png")
 
-        await ctx.send(embed=content)
-    
-    async def send_lemmas(self, ctx, data):
-        content = discord.Embed(colour = discord.Colour.from_rgb(128, 0, 0))
-        content.set_author(name=f"📚{data['results'][0]['word']}")
-        try:
-            for index in range(len(data['results'][0]['lexicalEntries'])):
-                for key, value in data['results'][0]['lexicalEntries'][index].items():
-                    try:
-                        if key == 'grammaticalFeatures':
-                            grammartext = value[0]['text']
-                            grammartype = value[0]['type']
-                    except ValueError:
-                        pass
-        except KeyError:
-            pass
-        if 'grammartype' and 'grammartype' in locals():
-            content.add_field(name="Grammar Property:", value=f"`{grammartext} - {grammartype}`", inline=False)
-        content.set_footer(text="Lemmas provided by Oxford University Press", icon_url="https://i.imgur.com/vDvSmF3.png")
         await ctx.send(embed=content)
 
 def setup(bot):
