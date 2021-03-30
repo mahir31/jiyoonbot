@@ -151,6 +151,8 @@ def get_pitch(p):
         tone = 'A'
     elif p == 11:
         tone = 'G♯'
+    else:
+        tone = 'unidentified'
     return tone
 
 def get_mode(m):
