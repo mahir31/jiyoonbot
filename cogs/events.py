@@ -17,7 +17,6 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        logging.info("cog: events.py connected")
         self.status_loop.start()
 
     @tasks.loop(minutes=5.0)

@@ -7,10 +7,6 @@ class Dictionary(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-
-    @commands.Cog.listener()
-    async def on_ready(self):
-        logging.info('cog: dictionary.py connected')
     
     @commands.command()
     async def define(self, ctx, args):

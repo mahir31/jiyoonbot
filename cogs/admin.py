@@ -8,10 +8,6 @@ class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        logging.info('cog: admin.py connected')
-
     @commands.command(hidden=True)
     async def load(self, ctx, *, module):
         """Loads a module"""

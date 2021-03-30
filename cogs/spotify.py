@@ -18,10 +18,6 @@ class Spotify(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @commands.Cog.listener()
-    async def on_ready(self):
-        logging.info("cog: spotify.py connected")
-    
     # commands
 
     @commands.group(case_insensitive=True)
@@ -174,7 +170,7 @@ class Spotify(commands.Cog):
             else:
                 await ctx.send('`an error occured`')
     
-    @sp.command(aliases=['sa'])
+    @commands.command(aliases=['sa'])
     async def searchartist(self, ctx, *query):
         '''search for an artist on spotify'''
         access_token = await self.rtv_access_token(ctx.author.id)
@@ -207,7 +203,7 @@ class Spotify(commands.Cog):
                     icon_url='https://www.scdn.co/i/_global/touch-icon-72.png')
                 await ctx.send(embed=content)
     
-    @sp.command(aliases=['salb'])
+    @commands.command(aliases=['salb'])
     async def searchalbum(self, ctx, *query):
         '''search for an album on spotify'''
         access_token = await self.rtv_access_token(ctx.author.id)

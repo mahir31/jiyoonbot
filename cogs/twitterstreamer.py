@@ -45,10 +45,6 @@ class TwitterStreamer(commands.Cog):
 		self.bot = bot
 		self.twitterStream = None
 	
-	@commands.Cog.listener()
-	async def on_ready(self):
-		logging.info("cog: twitterstreamer.py connected")
-	
 	# bot commands
 
 	@commands.group(case_insensitive=True, hidden=True)
