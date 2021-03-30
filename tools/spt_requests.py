@@ -88,7 +88,7 @@ async def internal_call(url, access_token):
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(f'{SPOTIFY_API_ENDPOINT}{url}', headers=headers) as response:
-                data = await response.json()
+                data = await response.json(content_type=None)
                 return data
     except requests.exceptions.HTTPError as http_error:
         result = 'error: ' + str(http_error)
