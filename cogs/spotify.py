@@ -228,7 +228,7 @@ class Spotify(commands.Cog):
                     icon_url='https://www.scdn.co/i/_global/touch-icon-72.png')
                 await ctx.send(embed=content)
     
-    @sp.command(aliases=['rc'])
+    @sp.command(aliases=['rec'])
     async def recommendations(self, ctx):
         '''recommendations generated from Spotify based on users top tracks, top artists and top genres'''
         access_token = await self.rtv_access_token(ctx.author.id)

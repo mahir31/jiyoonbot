@@ -78,13 +78,3 @@ def rtv_refresh_token(user_id):
 
 def delete_spt_user(user_id):
     execute("DELETE FROM spt_users WHERE user_id=?", (user_id,))
-
-# fish cog queries
-
-def fisher_exists(fisher_id):
-    data = query("SELECT * FROM fish WHERE fisher_id=?", (fisher_id,))
-    return data
-
-def go_fish(fisher_id, times_fished, total_fish, last_fished, exp_points, coins):
-    execute("REPLACE INTO fish(fisher_id, times_fished, total_fish, last_fished, exp_points, coins) VALUES(?, ?, ?, ?, ?, ?)",
-    (fisher_id, times_fished, total_fish, last_fished, exp_points, coins,))
