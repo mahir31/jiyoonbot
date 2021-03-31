@@ -22,7 +22,14 @@ class Sundry(commands.Cog):
     async def avatar(self, ctx, user : discord.User = None):
         if user is None:
             user = ctx.author
-        await ctx.send(user.avatar_url)
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f'{user.avatar_url}') as response:
+                data = {
+                    'format' : response.headers['Content-Type'],
+                    'last-modified': response.headers['Last-Modified'],
+                    'url': response.real_url
+                }
+        await ctx.send('job done')
 
 def setup(bot):
     bot.add_cog(Sundry(bot))
