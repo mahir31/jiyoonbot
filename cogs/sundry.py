@@ -4,6 +4,8 @@ from discord.ext.commands import bot
 from tools import utilities as util
 import aiohttp
 from PIL import Image
+from io import BytesIO
+from requests import get
 
 class Sundry(commands.Cog):
     """sundry commands"""
@@ -29,7 +31,10 @@ class Sundry(commands.Cog):
                     'last-modified': response.headers['Last-Modified'],
                     'url': response.real_url
                 }
-        await ctx.send('job done')
+                image_bytes = await response.read()
+                image = Image.open(BytesIO(image_bytes))
+                width, height = image.size
+                await ctx.send(f'{width}, {height}')
 
 def setup(bot):
     bot.add_cog(Sundry(bot))
