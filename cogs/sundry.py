@@ -36,7 +36,7 @@ class Sundry(commands.Cog):
         content = discord.Embed(colour=int(util.rgb_to_hex(ColorThief(BytesIO(image_bytes)).get_color(quality=1)), 16))
         content.set_author(name=util.displayname(user))
         content.set_image(url=user.avatar_url)
-        content.set_footer(text=f"Type: {data['format']} | Size: {width}x{height} | Last Modified: {data['last-modified']}")
+        content.set_footer(text=f"Type: {data['format']} | Size: {width}x{height} | Last Modified: {data['last-modified'][:-17]}")
         await ctx.send(embed=content)
 
 def setup(bot):
