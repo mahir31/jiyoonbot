@@ -2,7 +2,7 @@ from discord.ext import commands
 import discord
 import logging
 
-class Admin(commands.Cog):
+class Owner(commands.Cog):
     """Admin-only commands"""
 
     def __init__(self, bot):
@@ -38,4 +38,4 @@ class Admin(commands.Cog):
             await ctx.send('\N{OK HAND SIGN}')
 
 def setup(bot):
-    bot.add_cog(Admin(bot))
+    bot.add_cog(Owner(bot))
