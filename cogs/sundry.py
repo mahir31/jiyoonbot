@@ -13,7 +13,7 @@ class Sundry(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @commands.command()
+    @commands.command(aliases=["av", "dp"])
     async def avatar(self, ctx, user : discord.User = None):
         if user is None:
             user = ctx.author

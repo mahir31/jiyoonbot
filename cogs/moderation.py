@@ -1,5 +1,7 @@
 import discord 
 from discord.ext import commands
+from tools import utilities as util
+import argparse
 
 class Moderation(commands.Cog):
     """commands to moderate servers"""
@@ -19,9 +21,30 @@ class Moderation(commands.Cog):
                     
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def embed(self, ctx, title=None, description=None, url=None, embed_colour="#ffdd38", footer=None, image=None, thumbnail=None):
-        content = discord.Embed(colour=embed_colour)
-        await ctx.send(embed=content)
+    async def embed(self, ctx, *, args):
+        """sends embed in channel"""
+        try:
+            await ctx.send('job done')
+        except Exception as e:
+            await ctx.send(f'{e.__class__.__name__}: {e}')
+    
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def say(self, ctx, channel : discord.TextChannel, *, args):
+        """sends mesasge in specified channel"""
+        try:
+            await channel.send(str(args))
+            await ctx.send('\N{Thumbs Up Sign} Message has been sent to specified channel. This notification will be removed soon', delete_after=5)
+        except Exception as e:
+            await ctx.send(f'{e.__class__.__name__}: {e}')
+    
+    @commands.command()
+    async def parse(self, ctx, *, args):
+        for x in args.split(' | '):
+            for y in [x.split(' = ')]:
+                await ctx.send(y.pop(0))
+                await ctx.send(' '.join(y))
+
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

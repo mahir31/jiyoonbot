@@ -9,6 +9,7 @@ class Owner(commands.Cog):
         self.bot = bot
 
     @commands.command(hidden=True)
+    @commands.is_owner()
     async def load(self, ctx, *, module):
         """Loads a module"""
         try:
@@ -19,6 +20,7 @@ class Owner(commands.Cog):
             await ctx.send('\N{OK HAND SIGN}')
     
     @commands.command(hidden=True)
+    @commands.is_owner()
     async def unload(self, ctx, *, module):
         """Unloads a module"""
         try:
@@ -29,6 +31,7 @@ class Owner(commands.Cog):
             await ctx.send('\N{OK HAND SIGN}')
     
     @commands.command(hidden=True)
+    @commands.is_owner()
     async def reload(self, ctx, *, module):
         try:
             self.bot.reload_extension(f'cogs.{module}')
@@ -36,6 +39,11 @@ class Owner(commands.Cog):
             await ctx.send(f'{e.__class__.__name__}: {e}')
         else:
             await ctx.send('\N{OK HAND SIGN}')
+
+    @commands.command(hidden=True)
+    @commands.is_owner()
+    async def pat(self, ctx):
+        await ctx.send('\N{Heavy Black Heart}')
 
 def setup(bot):
     bot.add_cog(Owner(bot))
