@@ -230,7 +230,9 @@ class Spotify(commands.Cog):
     
     @sp.command(aliases=['rec'])
     async def recommendations(self, ctx, *, args=None):
-        '''recommendations generated from Spotify based on users top tracks, top artists and top genres'''
+        '''recommendations generated from Spotify\n
+            - send without arguments to receive results based on top tracks and top artists.
+            - send with "np" to receive result based on now playing'''
         seed_tracks = []
         seed_artists = []
         access_token = await self.rtv_access_token(ctx.author.id)
@@ -251,8 +253,7 @@ class Spotify(commands.Cog):
                 seed_track = await sp.internal_call('/v1/me/player/currently-playing', access_token)
                 seed_artist = await sp.internal_call('/v1/me/player/currently-playing', access_token)
                 await self.send_recommendations(ctx, seed_track['item']['id'], seed_artist['item']['artists'][0]['id'], access_token)
-                
-    
+
     @sp.command(aliases=['ft'])
     async def features(self, ctx):
         '''display audio features for currently playing or most recently played track'''
