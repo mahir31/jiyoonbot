@@ -1,4 +1,5 @@
-import discord 
+import discord
+from discord import colour 
 from discord.ext import commands
 from tools import utilities as util
 
@@ -22,12 +23,17 @@ class Moderation(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def embed(self, ctx, channel : discord.TextChannel, *, args):
         """
-        Sends embed in channel. 
-        Use the following example:
-            >embed #channel title = none | description = none | colour = none
-        Include all tags. 
-        Tags with 'none' will be ignored.
-        Unsupported tags will be ignored.
+        - Sends embed in channel, accepts defined arguments
+        - Arguments must be separated with "|" arguments must be defined with "="
+        - Tags with 'none' & unsupported tags will be ignored.\n
+        Supported Arguments:\n
+            > title: The title of the embed 
+            > description: The description of the embed
+            > colour: The colour code of the embed - provide hex code without hash(#)
+            > footer: Sets the footer for the embed content
+            > thumbnail: Sets the thumbnail for the embed content - provide image url
+            > image: Sets the image for the embed content - provide image url
+            > author: Sets the author for the embed content.
         """
         parsed_dict = {}
         try:
@@ -36,9 +42,27 @@ class Moderation(commands.Cog):
                     parsed_dict.update({y.pop(0).strip() : ''.join(y).strip()})
             for data in parsed_dict:
                 if parsed_dict[data] == '':
-                    await ctx.send(f'argument: "_{data}_" has no value - Verify that all tags have values')
-                    break
+                    await ctx.send(f'argument: "{data}" has no value - Verify that all tags have values')
+                    return
+                break
             parsed_dict = {key:val for key, val in parsed_dict.items() if not val == 'none'}
+            if not 'colour' in parsed_dict:
+                content = discord.Embed(colour=int('ffdd38', 16))
+            else:
+                content = discord.Embed(colour=int(parsed_dict['colour'], 16))
+            if 'title' in parsed_dict:
+                content.title = parsed_dict['title']
+            if 'description' in parsed_dict:
+                content.description = parsed_dict['description']
+            if 'footer' in parsed_dict:
+                content.set_footer(text=parsed_dict['footer'])
+            if 'thumbnail' in parsed_dict:
+                content.set_thumbnail(url=parsed_dict['thumbnail'])
+            if 'image' in parsed_dict:
+                content.set_image(url=parsed_dict['image'])
+            if 'author' in parsed_dict:
+                content.set_author(name=parsed_dict['author'])
+            await ctx.send(embed=content)
         except Exception as e:
             await ctx.send(f'{e.__class__.__name__}: {e}')
     
