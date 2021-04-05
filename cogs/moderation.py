@@ -1,7 +1,6 @@
 import discord 
 from discord.ext import commands
 from tools import utilities as util
-import argparse
 
 class Moderation(commands.Cog):
     """commands to moderate servers"""
@@ -21,14 +20,29 @@ class Moderation(commands.Cog):
                     
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def embed(self, ctx, *, args):
-        """sends embed in channel"""
+    async def embed(self, ctx, channel : discord.TextChannel, *, args):
+        """
+        Sends embed in channel. 
+        Use the following example:
+            >embed #channel title = none | description = none | colour = none
+        Include all tags. 
+        Tags with 'none' will be ignored.
+        Unsupported tags will be ignored.
+        """
+        parsed_dict = {}
         try:
-            await ctx.send('job done')
+            for x in args.split('|'):
+                for y in [x.split('=')]:
+                    parsed_dict.update({y.pop(0).strip() : ''.join(y).strip()})
+            for data in parsed_dict:
+                if parsed_dict[data] == '':
+                    await ctx.send(f'argument: "_{data}_" has no value - Verify that all tags have values')
+                    break
+            parsed_dict = {key:val for key, val in parsed_dict.items() if not val == 'none'}
         except Exception as e:
             await ctx.send(f'{e.__class__.__name__}: {e}')
     
-    @commands.command()
+    @commands.command() 
     @commands.has_permissions(administrator=True)
     async def say(self, ctx, channel : discord.TextChannel, *, args):
         """sends mesasge in specified channel"""
@@ -37,14 +51,6 @@ class Moderation(commands.Cog):
             await ctx.send('\N{Thumbs Up Sign} Message has been sent to specified channel. This notification will be removed soon', delete_after=5)
         except Exception as e:
             await ctx.send(f'{e.__class__.__name__}: {e}')
-    
-    @commands.command()
-    async def parse(self, ctx, *, args):
-        for x in args.split(' | '):
-            for y in [x.split(' = ')]:
-                await ctx.send(y.pop(0))
-                await ctx.send(' '.join(y))
-
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
