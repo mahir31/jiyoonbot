@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 import sqlite3
 
-DATABASE = 'data/data.db'
+# DATABASE = 'data/data.db'
+DATABASE = '/root/jiyoonbot/data/data.db'
 
 def query(command, parameters=()):
     db = sqlite3.connect(DATABASE)
@@ -82,7 +83,10 @@ def delete_spt_user(user_id):
 
 def nommer_exists(nommer_id):
     data = query("SELECT * FROM cookies WHERE nommer_id=?", (nommer_id,))
-    return data[0]
+    if data:
+        return data[0]
+    else:
+        return None
 
 def grab_cookies(nommer_id, last_grabbed, total_cookies, total_cookies_grabbed, total_cookies_gifted, total_grab_attempts, total_cookies_received):
     execute("REPLACE INTO cookies(nommer_id, last_grabbed, total_cookies, total_cookies_grabbed, total_cookies_gifted, total_grab_attempts, total_cookies_received) VALUES(?, ?, ?, ?, ?, ?, ?)", 
