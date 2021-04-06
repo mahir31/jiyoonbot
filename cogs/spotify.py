@@ -1,4 +1,5 @@
 import discord
+from discord import embeds
 from discord.ext import commands
 from data import database as db
 from tools import spt_requests as sp
@@ -78,16 +79,18 @@ class Spotify(commands.Cog):
     async def nowplaying(self, ctx):
         '''Show currently playing track'''
         access_token = await self.rtv_access_token(ctx.author.id)
-        if not access_token:
-            await ctx.send(embed=self.create_connect_embed())
-        else:
-            result = await sp.internal_call('/v1/me/player/currently-playing', access_token)
-            if result:
-                content = self.create_np_embed(result['item'], ctx.author)
+        try:
+            if not access_token:
+                await ctx.send(embed=self.create_connect_embed())
             else:
-                result = await sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
-                content = self.create_recently_played_embed(result['items'][0]['track'], ctx.author)
-            await ctx.send(embed=content)
+                result = await sp.internal_call('/v1/me/player/currently-playing', access_token)
+                if result:
+                    await self.create_np_embed(ctx, result['item'], ctx.author)
+                else:
+                    result = await sp.internal_call('/v1/me/player/recently-played?limit=1', access_token)
+                    await self.create_recently_played_embed(ctx, result['items'][0]['track'], ctx.author)
+        except Exception as e:
+            await ctx.send(f'{e.__class__.__name__}: {e}')
     
     @sp.command(aliases=['re'])
     async def recent(self, ctx):
@@ -309,43 +312,27 @@ class Spotify(commands.Cog):
         content.description = f"To utilise Spotify commands please click [here]({url}) to connect your account"
         return content
 
-    def create_np_embed(self, now_playing, user):
-        track_name = now_playing['name']
-        album_name = now_playing['album']['name']
-        artists = ', '.join([a['name'] for a in now_playing['artists']])
-        album_artwork = now_playing['album']['images'][1]['url']
-        image_color = util.color_from_image(album_artwork)
-        track_url = now_playing['external_urls']['spotify']
-        popularity = now_playing['popularity']
-
-        content = discord.Embed(colour = int(image_color, 16))
-        content.description = album_name
-        content.title = f'{artists} - {track_name}'
-        content.set_thumbnail(url=album_artwork)
+    async def create_np_embed(self, ctx, now_playing, user):
+        content = discord.Embed(colour = int(util.color_from_image(now_playing['album']['images'][1]['url']), 16))
+        content.description = now_playing['album']['name']
+        content.title = f"{', '.join([a['name'] for a in now_playing['artists']])} - {now_playing['name']}"
+        content.set_thumbnail(url=now_playing['album']['images'][1]['url'])
         content.set_author(name=util.displayname(user) + " is now playing",
             icon_url=user.avatar_url,
-            url=track_url)
-        content.set_footer(text=f'Popularity: {popularity}')
-        return content
+            url=now_playing['external_urls']['spotify'])
+        content.set_footer(text=f"Popularity: {now_playing['popularity']}")
+        await ctx.send(embed=content)
     
-    def create_recently_played_embed(self, recently_played, user):
-        track_name = recently_played['name']
-        album_name = recently_played['album']['name']
-        artists = ', '.join([a['name'] for a in recently_played['artists']])
-        album_artwork = recently_played['album']['images'][1]['url']
-        image_color = util.color_from_image(album_artwork)
-        track_url = recently_played['external_urls']['spotify']
-        popularity = recently_played['popularity']
-
-        content = discord.Embed(colour = int(image_color, 16))
-        content.description = album_name
-        content.title = f'{artists} - {track_name}'
-        content.set_thumbnail(url=album_artwork)
+    async def create_recently_played_embed(self, ctx, recently_played, user):
+        content = discord.Embed(colour = int(util.color_from_image(recently_played['album']['images'][1]['url']), 16))
+        content.description = recently_played['album']['name']
+        content.title = f"{', '.join([a['name'] for a in recently_played['artists']])} - {recently_played['name']}"
+        content.set_thumbnail(url=recently_played['album']['images'][1]['url'])
         content.set_author(name=util.displayname(user) + ' has most recently played:',
             icon_url=user.avatar_url,
-            url=track_url)
-        content.set_footer(text=f'Popularity: {popularity}')
-        return content
+            url=recently_played['external_urls']['spotify'])
+        content.set_footer(text=f"Popularity: {recently_played['popularity']}")
+        await ctx.send(embed=content)
     
     def create_artist_embed(self, artist, top_tracks):
         content = discord.Embed(colour=int(util.color_from_image(artist['images'][0]['url']), 16))
