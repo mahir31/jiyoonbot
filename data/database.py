@@ -81,5 +81,9 @@ def delete_spt_user(user_id):
 # cookies
 
 def nommer_exists(nommer_id):
-    data = query("SELECT * FROM where nommer_id=?", (nommer_id))
-    return data
+    data = query("SELECT * FROM cookies WHERE nommer_id=?", (nommer_id,))
+    return data[0]
+
+def grab_cookies(nommer_id, last_grabbed, total_cookies, total_cookies_grabbed, total_cookies_gifted, total_grab_attempts, total_cookies_received):
+    execute("REPLACE INTO cookies(nommer_id, last_grabbed, total_cookies, total_cookies_grabbed, total_cookies_gifted, total_grab_attempts, total_cookies_received) VALUES(?, ?, ?, ?, ?, ?, ?)", 
+    (nommer_id, last_grabbed, total_cookies, total_cookies_grabbed, total_cookies_gifted, total_grab_attempts, total_cookies_received,))

@@ -6,23 +6,14 @@ import aiohttp
 from PIL import Image
 from io import BytesIO
 from colorthief import ColorThief
-from data import database as db
-from datetime import datetime, timedelta
+
 
 class Sundry(commands.Cog):
     """sundry commands"""
 
     def __init__(self, bot):
         self.bot = bot
-        self.cookie_types = {
-            "none" : self.none,
-            "one" : self.one,
-            "some" : self.some,
-            "nom" : self.nom
-        }
-        self.weights = [10, 50, 30, 10]
-        
-    
+
     @commands.command(aliases=["av", "dp"])
     async def avatar(self, ctx, user : discord.User = None):
         """sends the avatar for self or mentioned user."""
@@ -42,14 +33,6 @@ class Sundry(commands.Cog):
         content.set_image(url=user.avatar_url)
         content.set_footer(text=f"Type: {data['format']} | Size: {width}x{height} | Last Modified: {data['last-modified'][:-17]}")
         await ctx.send(embed=content)
-    
-    @commands.command()
-    async def cookie(self, ctx, user : discord.User = None):
-        """gifts cookies to mentioned users"""
-        nommer = db.nommer_exists(ctx.author)
-        if nommer:
-            if user is None:
-                
 
 def setup(bot):
     bot.add_cog(Sundry(bot))
