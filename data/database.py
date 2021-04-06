@@ -77,3 +77,9 @@ def rtv_refresh_token(user_id):
 
 def delete_spt_user(user_id):
     execute("DELETE FROM spt_users WHERE user_id=?", (user_id,))
+
+# cookies
+
+def nommer_exists(nommer_id):
+    data = query("SELECT * FROM where nommer_id=?", (nommer_id))
+    return data

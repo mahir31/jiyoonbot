@@ -21,3 +21,12 @@ CREATE TABLE fish (
     coins INTEGER NOT NULL,
     PRIMARY KEY(fisher_id)
 );
+
+CREATE TABLE cookies (
+    nommer_id INTEGER NOT NULL,
+    cookies_grabbed INTEGER NOT NULL,
+    total_cookies INTEGER NOT NULL,
+    last_cookie REAL NOT NULL,
+    cookies_gifted INTEGER NOT NULL,
+    coookies_received INTEGER NOT NULL
+)
