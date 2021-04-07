@@ -39,7 +39,7 @@ class Cookies(commands.Cog):
         return time_difference
 
     async def empty(self, ctx, gifter_id, giftee_id):
-        await ctx.send(f"{util.displayname(await self.bot.fetch_user(ctx.author.id))} went to grab some cookies but didn't get any\N{Broken Heart}")
+        await self.cookies_sorter(ctx, await self.get_nommer_info(ctx, db.nommer_exists(gifter_id)), giftee_id, 0)
 
     async def one(self, ctx, gifter_id, giftee_id):
         await self.cookies_sorter(ctx, await self.get_nommer_info(ctx, db.nommer_exists(gifter_id)), giftee_id, 1)
@@ -94,7 +94,10 @@ class Cookies(commands.Cog):
                     0, 
                     increment
                 )
-            await ctx.send(f'\N{Cookie}{util.displayname(await self.bot.fetch_user(nommer[0]))} grabbed {increment} cookie(s) and gifted it to {util.displayname(await self.bot.fetch_user(giftee_id))}\N{Sparkling Heart}')
+            if increment == 0:
+                await ctx.send(f"{util.displayname(await self.bot.fetch_user(ctx.author.id))} went to grab some cookies but didn't get any\N{Broken Heart}")
+            else:
+                await ctx.send(f'\N{Cookie}{util.displayname(await self.bot.fetch_user(nommer[0]))} grabbed {increment} cookie(s) and gifted it to {util.displayname(await self.bot.fetch_user(giftee_id))}\N{Sparkling Heart}')
         else:
             db.grab_cookies(
                 nommer[0], 
@@ -105,7 +108,10 @@ class Cookies(commands.Cog):
                 nommer[5] + increment,
                 nommer[6]
             )
-            await ctx.send(f'\N{Cookie}{util.displayname(await self.bot.fetch_user(nommer[0]))} grabbed {increment} cookie(s)\N{Sparkling Heart}')
+            if increment == 0:
+                await ctx.send(f"{util.displayname(await self.bot.fetch_user(ctx.author.id))} went to grab some cookies but didn't get any\N{Broken Heart}")
+            else:
+                await ctx.send(f'\N{Cookie}{util.displayname(await self.bot.fetch_user(nommer[0]))} grabbed {increment} cookie(s)\N{Sparkling Heart}')
     
     async def instantiate_nommer(self, ctx, nommer_id):
         db.grab_cookies(nommer_id, datetime.timestamp(datetime.now() - timedelta(hours = 7)), 0, 0, 0, 0, 0)
