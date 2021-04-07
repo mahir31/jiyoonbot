@@ -26,13 +26,11 @@ class Cookies(commands.Cog):
             nommer = await self.instantiate_nommer(ctx, ctx.author.id)
         if self.cooldown_calc(db.nommer_exists(ctx.author.id)[1]) < 0:
             if user is None:
-                grab = random.choices(list(self.cookie_types.keys()), self.weights)[0]
-                await self.cookie_types['one'](ctx, ctx.author.id, None)
+                await self.cookie_types[random.choices(list(self.cookie_types.keys()), self.weights)[0]](ctx, ctx.author.id, None)
             else:
-                grab = random.choices(list(self.cookie_types.keys()), self.weights)[0]
-                await self.cookie_types['one'](ctx, ctx.author.id, user.id)
+                await self.cookie_types[random.choices(list(self.cookie_types.keys()), self.weights)[0]](ctx, ctx.author.id, user.id)
         else:
-            await ctx.send('too early bro')
+            await ctx.send(f'too early, try again in {util.stringfromtimestamp(self.cooldown_calc(db.nommer_exists(ctx.author.id)[1]))}')
 
     def cooldown_calc(self, last_time):
         cooldown = 21600
@@ -40,20 +38,17 @@ class Cookies(commands.Cog):
         time_difference = cooldown - time_difference
         return time_difference
 
-    async def empty(self, ctx, gifter, giftee):
-        await ctx.send('function works')
+    async def empty(self, ctx, gifter_id, giftee_id):
+        await ctx.send(f"{util.displayname(await self.bot.fetch_user(ctx.author.id))} went to grab some cookies but didn't get any\N{Broken Heart}")
 
     async def one(self, ctx, gifter_id, giftee_id):
-        if not gifter_id:
-            await self.cookies_sorter(ctx, await self.get_nommer_info(ctx, db.nommer_exists(gifter_id)), None, 1)
-        else:
-            await self.cookies_sorter(ctx, await self.get_nommer_info(ctx, db.nommer_exists(gifter_id)), giftee_id, 1)
+        await self.cookies_sorter(ctx, await self.get_nommer_info(ctx, db.nommer_exists(gifter_id)), giftee_id, 1)
 
-    async def some(self, ctx, gifter, giftee):
-        await ctx.send('function works')
+    async def some(self, ctx, gifter_id, giftee_id):
+        await self.cookies_sorter(ctx, await self.get_nommer_info(ctx, db.nommer_exists(gifter_id)), giftee_id, random.randint(2, 20))
 
-    async def nom(self, ctx, gifter, giftee):
-        await ctx.send('function works')
+    async def nom(self, ctx, gifter_id, giftee_id):
+        await self.cookies_sorter(ctx, await self.get_nommer_info(ctx, db.nommer_exists(gifter_id)), giftee_id, random.randint(21, 60))
     
     async def get_nommer_info(self, ctx, nommer):
         (
