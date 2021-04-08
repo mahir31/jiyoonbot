@@ -1,9 +1,23 @@
+import inspect
+from sqlite3.dbapi2 import Timestamp
 from discord.ext import commands
 import discord
 from data import database as db
 from datetime import datetime, timedelta
 import random
 from tools import utilities as util
+from dataclasses import dataclass
+
+@dataclass
+class Nommer:
+    """class for keeping track of data in nommer object"""
+    nommer_id : int
+    last_grabbed : float
+    total_cookies :int
+    total_cookies_grabbed : int
+    total_cookies_gifted : int
+    total_grab_attempts : int
+    total_cookies_received :int
 
 class Cookies(commands.Cog):
     """cookie commands"""
@@ -39,28 +53,16 @@ class Cookies(commands.Cog):
         return time_difference
 
     async def empty(self, ctx, gifter_id, giftee_id):
-        await self.cookies_sorter(ctx, await self.get_nommer_info(ctx, db.nommer_exists(gifter_id)), giftee_id, 0)
+        await self.cookies_sorter(ctx, db.nommer_exists(gifter_id), giftee_id, 0)
 
     async def one(self, ctx, gifter_id, giftee_id):
-        await self.cookies_sorter(ctx, await self.get_nommer_info(ctx, db.nommer_exists(gifter_id)), giftee_id, 1)
+        await self.cookies_sorter(ctx, db.nommer_exists(gifter_id), giftee_id, 1)
 
     async def some(self, ctx, gifter_id, giftee_id):
-        await self.cookies_sorter(ctx, await self.get_nommer_info(ctx, db.nommer_exists(gifter_id)), giftee_id, random.randint(2, 20))
+        await self.cookies_sorter(ctx, db.nommer_exists(gifter_id), giftee_id, random.randint(2, 20))
 
     async def nom(self, ctx, gifter_id, giftee_id):
-        await self.cookies_sorter(ctx, await self.get_nommer_info(ctx, db.nommer_exists(gifter_id)), giftee_id, random.randint(21, 60))
-    
-    async def get_nommer_info(self, ctx, nommer):
-        (
-            nommer_id, 
-            last_grabbed, 
-            total_cookies, 
-            total_cookies_grabbed, 
-            total_cookies_gifted, 
-            total_grab_attempts, 
-            total_cookies_received
-        ) = nommer
-        return nommer
+        await self.cookies_sorter(ctx, db.nommer_exists(gifter_id), giftee_id, random.randint(21, 60))
     
     async def cookies_sorter(self, ctx, nommer, giftee_id, increment):
         if giftee_id:
@@ -116,6 +118,6 @@ class Cookies(commands.Cog):
     async def instantiate_nommer(self, ctx, nommer_id):
         db.grab_cookies(nommer_id, datetime.timestamp(datetime.now() - timedelta(hours = 7)), 0, 0, 0, 0, 0)
         return
-
+    
 def setup(bot):
     bot.add_cog(Cookies(bot))
