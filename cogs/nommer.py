@@ -38,7 +38,7 @@ class Cookies(commands.Cog):
         nommer = db.nommer_exists(ctx.author.id)
         if not nommer:
             nommer = db.grab_cookies(ctx.author.id, datetime.timestamp(datetime.now() - timedelta(hours = 7)), 0, 0, 0, 0, 0)
-        if not self.cooldown_calc(db.nommer_exists(ctx.author.id)[1]) < 0:
+        if self.cooldown_calc(db.nommer_exists(ctx.author.id)[1]) < 0:
             if user is None:
                 await self.cookie_types[random.choices(list(self.cookie_types.keys()), self.weights)[0]](ctx, ctx.author.id, None)
             else:
