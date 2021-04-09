@@ -41,9 +41,9 @@ class Sundry(commands.Cog):
         try:
             response = await ctx.send('\N{EYES}')
             await response.delete()
-            await ctx.send(embed=discord.Embed(
-                title="\N{Table Tennis Paddle and Ball}", 
-                description=f"```API Reponse: **{(self.bot.latency *1000)}** ms\n```", 
+            await ctx.send(embed=discord.Embed( 
+                description=f"```API Response: {(self.bot.latency * 1000):.2f} ms" + 
+                f"\nCommand Response: {(response.created_at - ctx.message.created_at).total_seconds() * 1000} ms```", 
                 color=int('ffdd38', 16))
             )
         except Exception as e:
