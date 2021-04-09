@@ -91,3 +91,6 @@ def nommer_exists(nommer_id):
 def grab_cookies(nommer_id, last_grabbed, total_cookies, total_cookies_grabbed, total_cookies_gifted, total_grab_attempts, total_cookies_received):
     execute("REPLACE INTO cookies(nommer_id, last_grabbed, total_cookies, total_cookies_grabbed, total_cookies_gifted, total_grab_attempts, total_cookies_received) VALUES(?, ?, ?, ?, ?, ?, ?)", 
     (nommer_id, last_grabbed, total_cookies, total_cookies_grabbed, total_cookies_gifted, total_grab_attempts, total_cookies_received,))
+
+def new_prefix(guild_id, prefix):
+    execute("REPLACE INTO prefixes(guild_id, prefix) VALUES(?, ?)", (guild_id, prefix,))

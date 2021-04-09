@@ -1,5 +1,3 @@
-import inspect
-from sqlite3.dbapi2 import Timestamp
 from discord.ext import commands
 import discord
 from data import database as db

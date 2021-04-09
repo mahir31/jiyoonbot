@@ -12,16 +12,6 @@ CREATE TABLE spt_users (
     PRIMARY KEY(user_id)
 );
 
-CREATE TABLE fish (
-    fisher_id INTEGER NOT NULL,
-    times_fished INTEGER NOT NULL,
-    total_fish INTEGER NOT NULL,
-    last_fished REAL NOT NULL,
-    exp_points INTEGER NOT NULL,
-    coins INTEGER NOT NULL,
-    PRIMARY KEY(fisher_id)
-);
-
 CREATE TABLE cookies (
     nommer_id INTEGER NOT NULL,
     last_grabbed REAL NOT NULL,
@@ -31,4 +21,10 @@ CREATE TABLE cookies (
     total_grab_attempts INTEGER NOT NULL,
     total_cookies_received INTEGER NOT NULL,
     PRIMARY KEY(nommer_id)
+);
+
+CREATE TABLE prefixes (
+    guild_id INTEGER NOT NULL,
+    prefix TEXT NOT NULL,
+    PRIMARY KEY(guild_id)
 );

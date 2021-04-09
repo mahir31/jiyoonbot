@@ -2,6 +2,7 @@ import discord
 from discord import colour 
 from discord.ext import commands
 from tools import utilities as util
+from data import database as db
 
 class Moderation(commands.Cog):
     """commands to moderate servers"""
@@ -75,6 +76,23 @@ class Moderation(commands.Cog):
             await ctx.send('\N{Thumbs Up Sign} Message has been sent to specified channel. This notification will be removed soon', delete_after=5)
         except Exception as e:
             await ctx.send(f'{e.__class__.__name__}: {e}')
+    
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    @commands.guild_only()
+    async def prefix(self, ctx, prefix):
+        """changes prefix for current server"""
+        try:
+            if prefix.startswith(" "):
+                await ctx.send("\N{Warning Sign} Prefix can't start with space")
+            
+            if len(prefix) > 4:
+                await ctx.send("\N{Warning Sign} Prefix cannot exceed 4 characters")
+            
+            db.new_prefix(ctx.guild.id, prefix.lstrip())
+            await ctx.send(f"\N{White Heavy Check Mark} Bot prefix has been updated to {prefix}")
+        except Exception as e:
+            await ctx.send(f"{e.__class__.__name__}: {e}")
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

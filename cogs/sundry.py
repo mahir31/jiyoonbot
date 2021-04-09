@@ -37,14 +37,16 @@ class Sundry(commands.Cog):
     
     @commands.command()
     async def ping(self, ctx):
-        """Measures latency between a HEARTBEAT and a HEARTBEAT_ACK in seconds."""
+        """performs ping test"""
         try:
             response = await ctx.send('\N{EYES}')
             await response.delete()
-            await ctx.send(embed=discord.Embed( 
-                description=f"```API Response: {(self.bot.latency * 1000):.2f} ms" + 
-                f"\nCommand Response: {(response.created_at - ctx.message.created_at).total_seconds() * 1000} ms```", 
-                color=int('ffdd38', 16))
+            await ctx.send(
+                embed=discord.Embed( 
+                    description=f"```API Response: {(self.bot.latency * 1000):.2f} ms" + 
+                    f"\nCommand Response: {(response.created_at - ctx.message.created_at).total_seconds() * 1000} ms```", 
+                    color=int('ffdd38', 16)
+                )
             )
         except Exception as e:
             await ctx.send(f'{e.__class__.__name__}: {e}')
