@@ -1,3 +1,4 @@
+from zlib import decompress
 from discord.ext import commands
 import discord
 from discord.ext.commands import bot
@@ -33,6 +34,13 @@ class Sundry(commands.Cog):
         content.set_image(url=user.avatar_url)
         content.set_footer(text=f"Type: {data['format']} | Size: {width}x{height} | Last Modified: {data['last-modified'][:-17]}")
         await ctx.send(embed=content)
+    
+    @commands.command()
+    async def ping(self, ctx):
+        try:
+            await ctx.send(embed=discord.Embed(description=f"Ping: **{round(self.bot.latency *1000)}** milliseconds!", color=int('ffdd38', 16)))
+        except Exception as e:
+            await ctx.send(f'{e.__class__.__name__}: {e}')
 
 def setup(bot):
     bot.add_cog(Sundry(bot))
