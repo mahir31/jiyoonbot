@@ -92,5 +92,17 @@ def grab_cookies(nommer_id, last_grabbed, total_cookies, total_cookies_grabbed, 
     execute("REPLACE INTO cookies(nommer_id, last_grabbed, total_cookies, total_cookies_grabbed, total_cookies_gifted, total_grab_attempts, total_cookies_received) VALUES(?, ?, ?, ?, ?, ?, ?)", 
     (nommer_id, last_grabbed, total_cookies, total_cookies_grabbed, total_cookies_gifted, total_grab_attempts, total_cookies_received,))
 
-def new_prefix(guild_id, prefix):
+# prefixes
+
+def replace_prefix(guild_id, prefix):
     execute("REPLACE INTO prefixes(guild_id, prefix) VALUES(?, ?)", (guild_id, prefix,))
+
+def get_prefix(guild_id):
+    data = query("SELECT prefix FROM prefixes WHERE guild_id=?", (guild_id,))
+    return data[0][0]
+
+def new_guild_prefix(guild_id):
+    execute("INSERT INTO prefixes(guild_id, prefix) VALUES(?, ?)", (guild_id, "$",))
+
+def remove_guild_prefix(guild_id):
+    execute("DELETE FROM prefixes WHERE guild_id=?", (guild_id,))

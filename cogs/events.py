@@ -4,6 +4,7 @@ from discord import activity
 from discord.ext import commands, tasks
 import logging
 import random
+from data import database as db
 
 class Events(commands.Cog):
     """event handler"""
@@ -34,6 +35,14 @@ class Events(commands.Cog):
                 type=discord.ActivityType(new_status[0]), name=new_status[1]
             )
         )
+    
+    @commands.Cog.listener()
+    async def on_guild_join(self, guild):
+        db.new_guild_prefix(guild.id)
+    
+    @commands.Cog.listener()
+    async def on_guild_remove(self, guild):
+        db.remove_guild_prefix(guild.id)
 
 def setup(bot):
     bot.add_cog(Events(bot))

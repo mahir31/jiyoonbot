@@ -89,7 +89,7 @@ class Moderation(commands.Cog):
             if len(prefix) > 4:
                 await ctx.send("\N{Warning Sign} Prefix cannot exceed 4 characters")
             
-            db.new_prefix(ctx.guild.id, prefix.lstrip())
+            db.replace_prefix(ctx.guild.id, prefix.lstrip())
             await ctx.send(f"\N{White Heavy Check Mark} Bot prefix has been updated to {prefix}")
         except Exception as e:
             await ctx.send(f"{e.__class__.__name__}: {e}")

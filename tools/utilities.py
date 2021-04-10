@@ -5,6 +5,7 @@ import io
 import asyncio
 from colorthief import ColorThief
 from discord.ext import commands
+from data import database as db
 
 def color_from_image(url):
     image = urlopen(url)
@@ -161,3 +162,6 @@ def get_mode(m):
     elif m == 1:
         mode = 'Major'
     return mode
+
+def get_prefix(bot, message):
+    return((db.get_prefix(message.guild.id)))

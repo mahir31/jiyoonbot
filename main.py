@@ -4,6 +4,7 @@ from discord.ext import commands
 import logging
 from tools import help
 import os
+from tools import utilities as util
 
 logging.basicConfig(level=logging.INFO)
 
@@ -19,7 +20,7 @@ TOKEN = os.environ['GLENN_BOT_TOKEN' if DEV else 'JIYOON_BOT_TOKEN']
 bot = commands.Bot(
     owner_id=277176590402846721,
     help_command=help.helpembeds(),
-    command_prefix='>' if DEV else '$', 
+    command_prefix= ">" if DEV else (util.get_prefix), 
     intents=discord.Intents().all(), 
     case_insensitive=True
     )
