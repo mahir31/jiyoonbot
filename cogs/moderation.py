@@ -85,9 +85,11 @@ class Moderation(commands.Cog):
         try:
             if prefix.startswith(" "):
                 await ctx.send("\N{Warning Sign} Prefix can't start with space")
+                return
             
             if len(prefix) > 4:
                 await ctx.send("\N{Warning Sign} Prefix cannot exceed 4 characters")
+                return
             
             db.replace_prefix(ctx.guild.id, prefix.lstrip())
             await ctx.send(f"\N{White Heavy Check Mark} Bot prefix has been updated to {prefix}")
