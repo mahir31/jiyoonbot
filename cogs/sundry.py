@@ -55,6 +55,7 @@ class Sundry(commands.Cog):
     
     @commands.command()
     async def fortune(self, ctx):
+        """get a fortune cookie!"""
         try:
             content = discord.Embed(colour=int('7186d7', 16))
             async with aiohttp.ClientSession() as session:
