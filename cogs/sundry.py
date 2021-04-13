@@ -1,8 +1,10 @@
-from zlib import decompress
+from http import cookies
 from discord.ext import commands
 import discord
 from discord.ext.commands import bot
 from tools import utilities as util
+import asyncio
+import json
 import aiohttp
 from PIL import Image
 from io import BytesIO
@@ -48,6 +50,19 @@ class Sundry(commands.Cog):
                     color=int('ffdd38', 16)
                 )
             )
+        except Exception as e:
+            await ctx.send(f'{e.__class__.__name__}: {e}')
+    
+    @commands.command()
+    async def fortune(self, ctx):
+        try:
+            content = discord.Embed(colour=int('7186d7', 16))
+            async with aiohttp.ClientSession() as session:
+                async with session.get('https://api.ef.gy/fortune', headers={'Accept' : 'text/json'}) as response:
+                    data = await response.json(content_type=None)
+                    content.description = f"```{data['cookie']}```"
+                    content.set_footer(text=f"fortune cookie: #{data['id']}")
+                    await ctx.send(embed=content)
         except Exception as e:
             await ctx.send(f'{e.__class__.__name__}: {e}')
 
