@@ -60,7 +60,7 @@ class Sundry(commands.Cog):
             async with aiohttp.ClientSession() as session:
                 async with session.get('https://api.ef.gy/fortune', headers={'Accept' : 'text/json'}) as response:
                     data = await response.json(content_type=None)
-                    content.description = f"```{data['cookie']}```"
+                    content.description = f"{data['cookie']}"
                     content.set_footer(text=f"fortune cookie: #{data['id']}")
                     await ctx.send(embed=content)
         except Exception as e:
