@@ -12,8 +12,8 @@ class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.statuses = [
-            (3, f"{len(self.bot.guilds)} servers"),
-            (3, "jiyoonbot.xyz")
+            (3, lambda: f"{len(self.bot.guilds)} servers"),
+            (3, lambda: "jiyoonbot.xyz")
         ]
 
     @commands.Cog.listener()
@@ -32,7 +32,7 @@ class Events(commands.Cog):
         new_status = self.statuses[new_status]
         await self.bot.change_presence(
             activity=discord.Activity(
-                type=discord.ActivityType(new_status[0]), name=new_status[1]
+                type=discord.ActivityType(new_status[0]), name=new_status[1]()
             )
         )
     
