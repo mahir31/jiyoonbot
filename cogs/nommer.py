@@ -106,5 +106,32 @@ class Cookies(commands.Cog):
             else:
                 await ctx.send(f'\N{Cookie}{util.displayname(await self.bot.fetch_user(ctx.author.id))} grabbed {increment} cookie(s)\N{Sparkling Heart}')
     
+    @commands.command()
+    async def cookiejar(self, ctx, user : discord.User = None):
+        try:
+            if user is None:
+                user = ctx.author
+            nommer = db.nommer_exists(user.id)
+            if nommer:
+                nommer = Nommer(*nommer)
+                content = discord.Embed(
+                    colour=int('eee0b1', 16), 
+                    title=f"\N{Cookie} {util.displayname(user)}'s cookie jar!")
+                content.description = '\n'.join(
+                    [
+                        f'\N{Sparkles} Total Cookies: {nommer.total_cookies}',
+                        f'\N{Person Raising Both Hands in Celebration} Total Cookies Grabbed: {nommer.total_cookies_grabbed}',
+                        f'\N{Wrapped Present} Total Cookies Gifted: {nommer.total_cookies_gifted}',
+                        f'\N{Clapping Hands Sign} Total Grab Attempts: {nommer.total_grab_attempts}',
+                        f'\N{Red Gift Envelope} Total Cookies Received: {nommer.total_cookies_received}',
+                        f'\N{Timer Clock} Last Grabbed: {util.stringfromtimestamp((datetime.now() - datetime.fromtimestamp(nommer.last_grabbed)).seconds)}'
+                    ]
+                )
+                await ctx.send(embed=content)
+            else:
+                await ctx.send('job done')
+        except Exception as e:
+            await ctx.send(f"{e.__class__.__name__}: {e}")
+
 def setup(bot):
     bot.add_cog(Cookies(bot))
