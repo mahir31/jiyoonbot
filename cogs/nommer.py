@@ -129,7 +129,7 @@ class Cookies(commands.Cog):
                 )
                 await ctx.send(embed=content)
             else:
-                await ctx.send('job done')
+                await ctx.send(f"{util.displayname(user)} has no cookies in their cookiejar")
         except Exception as e:
             await ctx.send(f"{e.__class__.__name__}: {e}")
 
