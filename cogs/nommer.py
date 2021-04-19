@@ -132,6 +132,24 @@ class Cookies(commands.Cog):
                 await ctx.send(f"{util.displayname(user)} has no cookies in their cookiejar")
         except Exception as e:
             await ctx.send(f"{e.__class__.__name__}: {e}")
+    
+    @commands.command()
+    async def bakingtimer(self, ctx, user: discord.User = None):
+        try:
+            if user is None:
+                user = ctx.author
+            nommer = db.nommer_exists(user.id)
+            if nommer:
+                nommer = Nommer(*nommer)
+                nommer = self.cooldown_calc(nommer.last_grabbed)
+                if nommer < 0:
+                    await ctx.send("Fresh cookies are ready! Grab 'em while they're hot! \N{Fire}")
+                else:
+                    await ctx.send(f"\N{Timer Clock} Cookies are still in the oven, they'll be ready in {util.stringfromtimestamp(nommer)}")
+            else:
+                await ctx.send("Fresh cookies are ready! Grab 'em while they're hot! \N{Fire}")
+        except Exception as e:
+            await ctx.send(f"{e.__class__.__name__}: {e}")
 
 def setup(bot):
     bot.add_cog(Cookies(bot))
