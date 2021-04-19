@@ -30,13 +30,13 @@ class Cookies(commands.Cog):
         }
         self.weights = [10, 50, 30, 10]
     
-    @commands.command()
+    @commands.command(aliases=['biscuit'])
     async def cookie(self, ctx, user : discord.User = None):
         """gifts cookies to mentioned users"""
         nommer = db.nommer_exists(ctx.author.id)
         if not nommer:
             nommer = db.grab_cookies(ctx.author.id, datetime.timestamp(datetime.now() - timedelta(hours = 7)), 0, 0, 0, 0, 0)
-        if self.cooldown_calc(db.nommer_exists(ctx.author.id)[1]) < 0:
+        if not self.cooldown_calc(db.nommer_exists(ctx.author.id)[1]) < 0:
             if user is None:
                 await self.cookie_types[random.choices(list(self.cookie_types.keys()), self.weights)[0]](ctx, ctx.author.id, None)
             else:
@@ -90,7 +90,7 @@ class Cookies(commands.Cog):
             if increment == 0:
                 await ctx.send(f"{util.displayname(await self.bot.fetch_user(ctx.author.id))} went to grab some cookies but didn't get any \N{Broken Heart}")
             else:
-                await ctx.send(f'{util.displayname(await self.bot.fetch_user(ctx.author.id))} grabbed {increment} \N{Cookie} and gifted it to {util.displayname(await self.bot.fetch_user(giftee_id))} \N{Sparkling Heart}')
+                await ctx.send(f'{util.displayname(await self.bot.fetch_user(ctx.author.id))} grabbed {increment} \N{Cookie} and gifted {("it" if increment == 1 else "them")} to {util.displayname(await self.bot.fetch_user(giftee_id))} \N{Sparkling Heart}')
         else:
             db.grab_cookies(
                 nommer.nommer_id, 
