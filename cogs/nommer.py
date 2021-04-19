@@ -88,9 +88,9 @@ class Cookies(commands.Cog):
             else:
                 db.grab_cookies(giftee_id, datetime.timestamp(datetime.now() - timedelta(hours = 6)), increment, 0, 0, 0, increment)
             if increment == 0:
-                await ctx.send(f"{util.displayname(await self.bot.fetch_user(ctx.author.id))} went to grab some cookies but didn't get any\N{Broken Heart}")
+                await ctx.send(f"{util.displayname(await self.bot.fetch_user(ctx.author.id))} went to grab some cookies but didn't get any \N{Broken Heart}")
             else:
-                await ctx.send(f'\N{Cookie}{util.displayname(await self.bot.fetch_user(ctx.author.id))} grabbed {increment} cookie(s) and gifted it to {util.displayname(await self.bot.fetch_user(giftee_id))}\N{Sparkling Heart}')
+                await ctx.send(f'{util.displayname(await self.bot.fetch_user(ctx.author.id))} grabbed {increment} \N{Cookie} and gifted it to {util.displayname(await self.bot.fetch_user(giftee_id))} \N{Sparkling Heart}')
         else:
             db.grab_cookies(
                 nommer.nommer_id, 
@@ -102,9 +102,9 @@ class Cookies(commands.Cog):
                 nommer.total_cookies_received
             )
             if increment == 0:
-                await ctx.send(f"{util.displayname(await self.bot.fetch_user(ctx.author.id))} went to grab some cookies but didn't get any\N{Broken Heart}")
+                await ctx.send(f"{util.displayname(await self.bot.fetch_user(ctx.author.id))} went to grab some cookies but didn't get any \N{Broken Heart}")
             else:
-                await ctx.send(f'\N{Cookie}{util.displayname(await self.bot.fetch_user(ctx.author.id))} grabbed {increment} cookie(s)\N{Sparkling Heart}')
+                await ctx.send(f'\N{Sparkles} {util.displayname(await self.bot.fetch_user(ctx.author.id))} grabbed {increment} \N{Cookie}')
     
     @commands.command()
     async def cookiejar(self, ctx, user : discord.User = None):
