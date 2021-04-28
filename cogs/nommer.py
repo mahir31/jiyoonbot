@@ -124,7 +124,7 @@ class Cookies(commands.Cog):
                         f'\N{Wrapped Present} Total Cookies Gifted: {nommer.total_cookies_gifted}',
                         f'\N{Clapping Hands Sign} Total Grab Attempts: {nommer.total_grab_attempts}',
                         f'\N{Red Gift Envelope} Total Cookies Received: {nommer.total_cookies_received}',
-                        f'\N{Timer Clock} Last Grabbed: {util.stringfromtimestamp((datetime.now() - datetime.fromtimestamp(nommer.last_grabbed)).seconds)}'
+                        f'\N{Timer Clock} Last Grabbed: {("Never" if nommer.total_cookies_grabbed == 0 else util.stringfromtimestamp((datetime.now() - datetime.fromtimestamp(nommer.last_grabbed)).seconds))}'
                     ]
                 )
                 await ctx.send(embed=content)
