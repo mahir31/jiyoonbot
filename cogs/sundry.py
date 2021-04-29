@@ -16,6 +16,7 @@ class Sundry(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.colour = 'ffdd38'
 
     @commands.command(aliases=["av", "dp"])
     async def avatar(self, ctx, user : discord.User = None):
@@ -66,6 +67,19 @@ class Sundry(commands.Cog):
                     await ctx.send(embed=content)
         except Exception as e:
             await ctx.send(f'{e.__class__.__name__}: {e}')
+    
+    @commands.command(aliases=["inv"])
+    async def invite(self, ctx):
+        content = discord.Embed(
+            colour=int(self.colour, 16), 
+            description="Click [here](https://discord.com/api/oauth2/authorize?client_id=763475902339350608&permissions=1073835072&redirect_uri=https%3A%2F%2Fjiyoonbot.xyz%2Fcallback%2Fsp%2F&scope=bot) to invite Jiyoon Bot to your server!",
+            )
+        content.set_author(
+            name="Server invitation",
+            url="https://discord.com/api/oauth2/authorize?client_id=763475902339350608&permissions=1073835072&redirect_uri=https%3A%2F%2Fjiyoonbot.xyz%2Fcallback%2Fsp%2F&scope=bot",
+            icon_url='https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-512.png'
+        )
+        await ctx.send(embed=content)
 
 def setup(bot):
     bot.add_cog(Sundry(bot))
