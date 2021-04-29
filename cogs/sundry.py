@@ -72,11 +72,11 @@ class Sundry(commands.Cog):
     async def invite(self, ctx):
         content = discord.Embed(
             colour=int(self.colour, 16), 
-            description="Click [here](https://discord.com/api/oauth2/authorize?client_id=763475902339350608&permissions=1073835072&redirect_uri=https%3A%2F%2Fjiyoonbot.xyz%2Fcallback%2Fsp%2F&scope=bot) to invite Jiyoon Bot to your server!",
+            description="Click [here](https://discord.com/api/oauth2/authorize?client_id=763475902339350608&permissions=388160&redirect_uri=https%3A%2F%2Fjiyoonbot.xyz%2Fcallback%2Fsp%2F&scope=bot) to invite Jiyoon Bot to your server!",
             )
         content.set_author(
             name="Server invitation",
-            url="https://discord.com/api/oauth2/authorize?client_id=763475902339350608&permissions=1073835072&redirect_uri=https%3A%2F%2Fjiyoonbot.xyz%2Fcallback%2Fsp%2F&scope=bot",
+            url='https://discord.com/api/oauth2/authorize?client_id=763475902339350608&permissions=388160&redirect_uri=https%3A%2F%2Fjiyoonbot.xyz%2Fcallback%2Fsp%2F&scope=bot',
             icon_url='https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-512.png'
         )
         await ctx.send(embed=content)
