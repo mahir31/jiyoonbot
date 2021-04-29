@@ -10,6 +10,7 @@ from io import BytesIO
 import requests
 import os
 import matplotlib.pyplot as plt
+import numpy as np
 
 class Spotify(commands.Cog):
     
@@ -364,12 +365,39 @@ class Spotify(commands.Cog):
 
     async def create_features_chart(self, ctx, track, access_token):
         try:
+            plt.rcdefaults()
+            fig, ax = plt.subplots()
             features = await sp.internal_call(f'/v1/audio-features/{track["id"]}', access_token)
-            labels = f'danceability ({features["danceability"]})', f'energy ({features["energy"]})', f'speechiness ({features["speechiness"]})', f'acousticness ({features["acousticness"]})', f'liveness ({features["liveness"]})', f'valence ({features["valence"]})'
-            size = [features['danceability'], features['energy'], features['speechiness'], features['acousticness'], features['liveness'], features['valence']]
-            plt.pie(size, colors=self.colours, startangle=90, wedgeprops= { 'linewidth' : 0.5, 'edgecolor' : 'black' }) 
-            plt.legend(labels, loc='best', facecolor='white', frameon=True, framealpha=1, edgecolor='black', fancybox=False)
-            plt.axis('equal')
+            labels = (
+                'Danceability', 
+                'Energy', 
+                'Speechiness', 
+                'Acousticness', 
+                'Liveness', 
+                'Valence'
+            )
+            y_pos = np.arange(len(labels))
+            data = [
+                features['danceability'], 
+                features['energy'], 
+                features['speechiness'], 
+                features['acousticness'], 
+                features['liveness'], 
+                features['valence']
+            ]
+            ax.barh(y_pos, data, height=0.5, color=self.colours, align='center')
+            ax.set_yticks(y_pos)
+            ax.set_yticklabels(labels)
+            ax.set_facecolor('#2e3440')
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            ax.spines['bottom'].set_color('white')
+            ax.spines['left'].set_color('white')
+            ax.tick_params(
+                axis = 'both',
+                colors = 'white'
+            )
+            ax.set_xlim(0.0, 1.0)
             plt.tight_layout()
             plt.savefig('chart.jpeg', facecolor='#2e3440')
             file = discord.File('chart.jpeg', filename='chart.jpeg')
