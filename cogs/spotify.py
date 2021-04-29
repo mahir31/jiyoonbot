@@ -4,20 +4,25 @@ from discord.ext import commands
 from data import database as db
 from tools import spt_requests as sp
 from tools import utilities as util
-import logging
 import asyncio
 from PIL import Image
 from io import BytesIO
 import requests
 import os
 import matplotlib.pyplot as plt
-from palettable.cartocolors.qualitative import Prism_7
-from textwrap import wrap
 
 class Spotify(commands.Cog):
     
     def __init__(self, bot):
         self.bot = bot
+        self.colours = [
+            "#5e81ac",
+            "#bf616a",
+            "#d08770",
+            "#ebcb8b",
+            "#a3be8c",
+            "#b48ead"
+        ]
     
     # commands
 
@@ -362,11 +367,11 @@ class Spotify(commands.Cog):
             features = await sp.internal_call(f'/v1/audio-features/{track["id"]}', access_token)
             labels = f'danceability ({features["danceability"]})', f'energy ({features["energy"]})', f'speechiness ({features["speechiness"]})', f'acousticness ({features["acousticness"]})', f'liveness ({features["liveness"]})', f'valence ({features["valence"]})'
             size = [features['danceability'], features['energy'], features['speechiness'], features['acousticness'], features['liveness'], features['valence']]
-            plt.pie(size, colors=Prism_7.hex_colors, startangle=90, wedgeprops= { 'linewidth' : 0.5, 'edgecolor' : 'black' }) 
+            plt.pie(size, colors=self.colours, startangle=90, wedgeprops= { 'linewidth' : 0.5, 'edgecolor' : 'black' }) 
             plt.legend(labels, loc='best', facecolor='white', frameon=True, framealpha=1, edgecolor='black', fancybox=False)
             plt.axis('equal')
             plt.tight_layout()
-            plt.savefig('chart.jpeg', facecolor='#bebebe')
+            plt.savefig('chart.jpeg', facecolor='#2e3440')
             file = discord.File('chart.jpeg', filename='chart.jpeg')
             
             content = discord.Embed(colour=int(util.color_from_image('https://www.scdn.co/i/_global/touch-icon-72.png'), 16))
