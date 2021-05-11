@@ -40,10 +40,5 @@ class Owner(commands.Cog):
         else:
             await ctx.send('\N{OK HAND SIGN}')
 
-    @commands.command(hidden=True)
-    @commands.is_owner()
-    async def pat(self, ctx):
-        await ctx.send('\N{Heavy Black Heart}')
-
 def setup(bot):
     bot.add_cog(Owner(bot))

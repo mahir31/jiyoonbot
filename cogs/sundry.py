@@ -3,12 +3,11 @@ from discord.ext import commands
 import discord
 from discord.ext.commands import bot
 from tools import utilities as util
-import asyncio
-import json
 import aiohttp
 from PIL import Image
 from io import BytesIO
 from colorthief import ColorThief
+import random
 
 
 class Sundry(commands.Cog):
@@ -17,6 +16,16 @@ class Sundry(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.colour = 'ffdd38'
+        self.pat = [
+            "(；^＿^)ッ☆(　゜o゜)",
+            "(ｏ・_・)ノ”(ノ_＜。)",
+            "(　^_^)ﾉ(´･ω･`)　ﾅﾃﾞﾅﾃﾞ"
+        ]
+        self.sparkles = [
+            "✧･ﾟ: *✧･ﾟ:*",
+            "*＊✿❀",
+            "⋆ₓₒ",
+        ]
 
     @commands.command(aliases=["av", "dp"])
     async def avatar(self, ctx, user : discord.User = None):
@@ -80,6 +89,14 @@ class Sundry(commands.Cog):
             icon_url='https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-512.png'
         )
         await ctx.send(embed=content)
+    
+    @commands.command()
+    async def pat(self, ctx, args):
+        try:
+            sparkle = random.choice(self.sparkles)
+            await ctx.send(f"{args} \\{sparkle} {random.choice(self.pat)} \\{sparkle[::-1]}")
+        except Exception as e:
+            await ctx.send(f"{e.__class__.__name__}: {e}")
 
 def setup(bot):
     bot.add_cog(Sundry(bot))

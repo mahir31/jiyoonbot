@@ -388,6 +388,8 @@ class Spotify(commands.Cog):
             ax.barh(y_pos, data, height=0.5, color=self.colours, align='center')
             ax.set_yticks(y_pos)
             ax.set_yticklabels(labels)
+            for i, v in enumerate(data):
+                ax.annotate(f'{int(v*100)}%', [v + 0.005, i], color='white', va='center')
             ax.set_facecolor('#2e3440')
             ax.spines['top'].set_visible(False)
             ax.spines['right'].set_visible(False)
