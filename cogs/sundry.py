@@ -18,12 +18,12 @@ class Sundry(commands.Cog):
         self.colour = 'ffdd38'
         self.pat = [
             "(；^＿^)ッ☆(　゜o゜)",
-            "(ｏ・_・)ノ”(ノ_＜。)",
-            "(　^_^)ﾉ(´･ω･`)　ﾅﾃﾞﾅﾃﾞ"
+            "( ^ ᗜ ^ )ノ”(◉⩊◉)",
+            "ﾅﾃﾞ(　^_^)ﾉ(´･ω･`)ﾅﾃﾞ"
         ]
         self.sparkles = [
-            "✧･ﾟ: *✧･ﾟ:*",
-            "*＊✿❀",
+            "✧･✧",
+            "*✿❀",
             "⋆ₓₒ",
         ]
 
@@ -94,7 +94,7 @@ class Sundry(commands.Cog):
     async def pat(self, ctx, args):
         try:
             sparkle = random.choice(self.sparkles)
-            await ctx.send(f"{args} \\{sparkle} {random.choice(self.pat)} \\{sparkle[::-1]}")
+            await ctx.send(f"{args} \\{sparkle} {random.choice(self.pat)} {sparkle[::-1]}")
         except Exception as e:
             await ctx.send(f"{e.__class__.__name__}: {e}")
 
