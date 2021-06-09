@@ -97,6 +97,11 @@ class Sundry(commands.Cog):
             await ctx.send(f"{args} \\{sparkle} {random.choice(self.pat)} {sparkle[::-1]}")
         except Exception as e:
             await ctx.send(f"{e.__class__.__name__}: {e}")
+    
+    @commands.command()
+    async def roll(self, ctx, args):
+        """rolls dice"""
+        pass
 
 def setup(bot):
     bot.add_cog(Sundry(bot))
