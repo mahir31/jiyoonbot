@@ -133,7 +133,7 @@ class Cookies(commands.Cog):
         except Exception as e:
             await ctx.send(f"{e.__class__.__name__}: {e}")
     
-    @commands.command()
+    @commands.command(aliases=['bt'])
     async def bakingtimer(self, ctx, user: discord.User = None):
         try:
             if user is None:
