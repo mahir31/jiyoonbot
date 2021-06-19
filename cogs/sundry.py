@@ -1,4 +1,3 @@
-from http import cookies
 from discord.ext import commands
 import discord
 from discord.ext.commands import bot
@@ -99,9 +98,9 @@ class Sundry(commands.Cog):
             await ctx.send(f"{e.__class__.__name__}: {e}")
     
     @commands.command()
-    async def roll(self, ctx, args):
+    async def roll(self, ctx, *args):
         """rolls dice"""
-        pass
+        await ctx.send(args)
 
 def setup(bot):
     bot.add_cog(Sundry(bot))
