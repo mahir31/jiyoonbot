@@ -7,6 +7,7 @@ from PIL import Image
 from io import BytesIO
 from colorthief import ColorThief
 import random
+import random
 
 
 class Sundry(commands.Cog):
@@ -98,9 +99,26 @@ class Sundry(commands.Cog):
             await ctx.send(f"{e.__class__.__name__}: {e}")
     
     @commands.command()
-    async def roll(self, ctx, *args):
-        """rolls dice"""
-        await ctx.send(args)
+    async def roll(self, ctx, *args,):
+        """rolls polyhedral dice. standard dice apply: d20, d12, d8, d8, d6, d4
+        specify number and then dice, separate arguments with space.
+        e.g. 1d6 2d20"""
+        message = await ctx.send("\N{game die} Rolling Dice \N{game die}")
+        total = 0
+        for i in list(args):
+            try:
+                x = i.split("d")
+                rolls = int(x[0])
+                dice = int(x[1])
+                if dice in [20, 12, 8, 6, 4]:
+                    for i in range(rolls):
+                        total += random.randint(1, dice)
+                else:
+                    await ctx.send(f"invalid dice {dice}, valid dice d20, d12, d8, d6, d4")
+                    break
+            except ValueError:
+                await message.delete()
+        await message.edit(content=f"\N{game die} **You rolled: {total}** \N{game die}")
 
 def setup(bot):
     bot.add_cog(Sundry(bot))
