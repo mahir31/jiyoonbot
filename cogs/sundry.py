@@ -13,7 +13,7 @@ class Sundry(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.fortune = open('fortunes/fortunes', 'r', encoding='utf8').read().split('%')
+        self.fortune = open('/root/jiyoonbot/fortunes/fortunes', 'r', encoding='utf8').read().split('%')
         self.colour = '53e9f1'
         self.pat = [
             "(；^＿^)ッ☆(　゜o゜)",
