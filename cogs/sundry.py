@@ -7,15 +7,14 @@ from PIL import Image
 from io import BytesIO
 from colorthief import ColorThief
 import random
-import random
-
 
 class Sundry(commands.Cog):
     """sundry commands"""
 
     def __init__(self, bot):
         self.bot = bot
-        self.colour = 'ffdd38'
+        self.fortune = open('fortunes/fortunes', 'r', encoding='utf8').read().split('%')
+        self.colour = '53e9f1'
         self.pat = [
             "(；^＿^)ッ☆(　゜o゜)",
             "( ^ ᗜ ^ )ノ”(◉⩊◉)",
@@ -66,17 +65,16 @@ class Sundry(commands.Cog):
     @commands.command()
     async def fortune(self, ctx):
         """get a fortune cookie!"""
-        try:
-            content = discord.Embed(colour=int('7186d7', 16))
-            async with aiohttp.ClientSession() as session:
-                async with session.get('https://api.ef.gy/fortune', headers={'Accept' : 'text/json'}) as response:
-                    data = await response.json(content_type=None)
-                    content.description = f"{data['cookie']}"
-                    content.set_footer(text=f"fortune cookie: #{data['id']}")
-                    await ctx.send(embed=content)
-        except Exception as e:
-            await ctx.send(f'{e.__class__.__name__}: {e}')
-    
+        x = random.randint(0, len(self.fortune))
+        content = discord.Embed(
+            color=int(self.colour, 16),
+            description=self.fortune[x]
+        )
+        content.set_footer(text=f'fortune cookie: #{x}')
+        await ctx.send(embed=content)
+
+
+
     @commands.command(aliases=["inv"])
     async def invite(self, ctx):
         content = discord.Embed(
